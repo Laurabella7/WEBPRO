@@ -110,9 +110,12 @@
 <?php
 include_once('db_connect.php');
 
+// Detect if a search was actually submitted
+$is_searched = isset($_GET['origin_id']) && !empty($_GET['origin_id']);
+
 $origin_id      = intval($_GET['origin_id'] ?? 0);
 $destination_id = intval($_GET['destination_id'] ?? 0);
-$departure_date = $_GET['departure_date'] ?? date('Y-m-d', strtotime('+1 day'));
+$departure_date = $_GET['departure_date'] ?? ''; // Removed the +1 day default
 $passengers     = intval($_GET['passengers'] ?? 1);
 $class_filter   = $_GET['class_filter'] ?? '';
 $sort_by        = $_GET['sort_by'] ?? 'price_asc';
@@ -122,35 +125,38 @@ $airports_q = mysqli_query($conn, "SELECT * FROM airport ORDER BY city");
 $airports_arr = [];
 while($r = mysqli_fetch_assoc($airports_q)) $airports_arr[$r['id']] = $r;
 
-// Build flight query
-$sql = "SELECT f.*, 
-        a1.code AS origin_code, a1.city AS origin_city, a1.name AS origin_name,
-        a2.code AS dest_code, a2.city AS dest_city, a2.name AS dest_name,
-        MIN(s.price) AS min_price,
-        SUM(CASE WHEN s.is_booked=0 THEN 1 ELSE 0 END) AS available_seats
-        FROM flight f
-        JOIN airport a1 ON f.origin_id = a1.id
-        JOIN airport a2 ON f.destination_id = a2.id
-        LEFT JOIN seat s ON s.flight_id = f.id";
+// Only run the flight query if the user actually searched
+$total = 0;
+if ($is_searched) {
+    $sql = "SELECT f.*, 
+            a1.code AS origin_code, a1.city AS origin_city, a1.name AS origin_name,
+            a2.code AS dest_code, a2.city AS dest_city, a2.name AS dest_name,
+            MIN(s.price) AS min_price,
+            SUM(CASE WHEN s.is_booked=0 THEN 1 ELSE 0 END) AS available_seats
+            FROM flight f
+            JOIN airport a1 ON f.origin_id = a1.id
+            JOIN airport a2 ON f.destination_id = a2.id
+            LEFT JOIN seat s ON s.flight_id = f.id";
 
-$wheres = [];
-if ($origin_id)      $wheres[] = "f.origin_id = $origin_id";
-if ($destination_id) $wheres[] = "f.destination_id = $destination_id";
-if ($departure_date) $wheres[] = "DATE(f.departure_time) = '$departure_date'";
-if ($class_filter)   $wheres[] = "s.class = '" . mysqli_real_escape_string($conn, $class_filter) . "'";
+    $wheres = [];
+    if ($origin_id)      $wheres[] = "f.origin_id = $origin_id";
+    if ($destination_id) $wheres[] = "f.destination_id = $destination_id";
+    if ($departure_date) $wheres[] = "DATE(f.departure_time) >= '$departure_date'"; // Using >= as discussed previously
+    if ($class_filter)   $wheres[] = "s.class = '" . mysqli_real_escape_string($conn, $class_filter) . "'";
 
-if ($wheres) $sql .= " WHERE " . implode(" AND ", $wheres);
-$sql .= " GROUP BY f.id";
+    if ($wheres) $sql .= " WHERE " . implode(" AND ", $wheres);
+    $sql .= " GROUP BY f.id";
 
-$order = match($sort_by) {
-    'price_desc' => 'ORDER BY min_price DESC',
-    'duration'   => 'ORDER BY TIMESTAMPDIFF(MINUTE, f.departure_time, f.arrival_time) ASC',
-    default      => 'ORDER BY min_price ASC',
-};
-$sql .= " $order";
+    $order = match($sort_by) {
+        'price_desc' => 'ORDER BY min_price DESC',
+        'duration'   => 'ORDER BY TIMESTAMPDIFF(MINUTE, f.departure_time, f.arrival_time) ASC',
+        default      => 'ORDER BY min_price ASC',
+    };
+    $sql .= " $order";
 
-$flights = mysqli_query($conn, $sql);
-$total = mysqli_num_rows($flights);
+    $flights = mysqli_query($conn, $sql);
+    $total = mysqli_num_rows($flights);
+}
 ?>
 
 <!-- SIDEBAR -->
@@ -188,7 +194,8 @@ $total = mysqli_num_rows($flights);
         <form method="GET">
             <div class="sb-field">
                 <div class="sb-label">From</div>
-                <select name="origin_id" class="sb-select">
+                <select name="origin_id" class="sb-select" required>
+                    <option value="" disabled hidden <?php echo !$origin_id ? 'selected' : ''; ?>>Select Origin</option>
                     <?php foreach($airports_arr as $ap): ?>
                     <option value="<?php echo $ap['id']; ?>" <?php echo ($ap['id']==$origin_id)?'selected':''; ?>>
                         <?php echo $ap['code'].' – '.$ap['city']; ?>
@@ -198,7 +205,8 @@ $total = mysqli_num_rows($flights);
             </div>
             <div class="sb-field">
                 <div class="sb-label">To</div>
-                <select name="destination_id" class="sb-select">
+                <select name="destination_id" class="sb-select" required>
+                    <option value="" disabled hidden <?php echo !$destination_id ? 'selected' : ''; ?>>Select Destination</option>
                     <?php foreach($airports_arr as $ap): ?>
                     <option value="<?php echo $ap['id']; ?>" <?php echo ($ap['id']==$destination_id)?'selected':''; ?>>
                         <?php echo $ap['code'].' – '.$ap['city']; ?>
@@ -208,7 +216,7 @@ $total = mysqli_num_rows($flights);
             </div>
             <div class="sb-field">
                 <div class="sb-label">Date</div>
-                <input type="date" name="departure_date" class="sb-input" value="<?php echo $departure_date; ?>">
+                <input type="date" name="departure_date" class="sb-input" value="<?php echo $departure_date; ?>" required>
             </div>
             <div class="sb-field">
                 <div class="sb-label">Passengers</div>
@@ -266,74 +274,76 @@ $total = mysqli_num_rows($flights);
 
         <!-- RESULTS -->
         <div>
-            <div class="results-header">
-                <div class="results-count">Found <span><?php echo $total; ?></span> flight<?php echo $total!=1?'s':''; ?></div>
-            </div>
+            <?php if (!$is_searched): ?>
+                <div class="no-results">
+                    <i class="bi bi-search"></i>
+                    Where would you like to fly?<br>Please select your origin, destination, and dates above.
+                </div>
+            <?php else: ?>
+                <div class="results-header">
+                    <div class="results-count">Found <span><?php echo $total; ?></span> flight<?php echo $total!=1?'s':''; ?></div>
+                </div>
 
-            <?php if ($total == 0): ?>
-            <div class="no-results">
-                <i class="bi bi-airplane"></i>
-                No flights found for this route.<br>Try different dates or destinations.
-            </div>
+                <?php if ($total == 0): ?>
+                <div class="no-results">
+                    <i class="bi bi-airplane"></i>
+                    No flights found for this route.<br>Try different dates or destinations.
+                </div>
+                <?php endif; ?>
+
+                <?php while ($f = mysqli_fetch_assoc($flights)):
+                    $dep = new DateTime($f['departure_time']);
+                    $arr = new DateTime($f['arrival_time']);
+                    $dur = $dep->diff($arr);
+                    $dur_str = ($dur->h ? $dur->h.'h ' : '') . $dur->i.'m';
+                    $available = intval($f['available_seats']);
+                ?>
+                <div class="flight-card" onclick="window.location='seat_selection.php?flight_id=<?php echo $f['id']; ?>&passengers=<?php echo $passengers; ?>'">
+                    <div class="airline-info">
+                        <div class="airline-logo">✈️</div>
+                        <div>
+                            <div style="font-weight:600;font-size:14px"><?php echo $f['airline']; ?></div>
+                            <div class="flight-num"><?php echo $f['flight_number']; ?></div>
+                        </div>
+                    </div>
+
+                    <div class="route-col">
+                        <div class="route-time"><?php echo $dep->format('H:i'); ?></div>
+                        <div class="route-airport"><?php echo $f['origin_code']; ?></div>
+                        <div style="font-size:11px;color:var(--muted)"><?php echo $f['origin_city']; ?></div>
+                    </div>
+
+                    <div style="text-align:center">
+                        <div class="route-duration"><?php echo $dur_str; ?></div>
+                        <div class="route-line">
+                            <div class="route-dot"></div>
+                            <div class="route-line-bar">
+                                <div class="route-plane"><i class="bi bi-airplane-fill"></i></div>
+                            </div>
+                            <div class="route-dot"></div>
+                        </div>
+                        <div style="font-size:11px;color:var(--muted)">Direct</div>
+                    </div>
+
+                    <div class="route-col">
+                        <div class="route-time"><?php echo $arr->format('H:i'); ?></div>
+                        <div class="route-airport"><?php echo $f['dest_code']; ?></div>
+                        <div style="font-size:11px;color:var(--muted)"><?php echo $f['dest_city']; ?></div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+                        <div class="price-col">
+                            <div class="price-from">from</div>
+                            <div class="price-amount">IDR <?php echo number_format($f['min_price']); ?></div>
+                            <div class="price-seat" style="color:<?php echo $available<5?'var(--red)':'var(--green)'; ?>">
+                                <?php echo $available; ?> seat<?php echo $available!=1?'s':''; ?> left
+                            </div>
+                        </div>
+                        <button class="btn-select">Select <i class="bi bi-arrow-right"></i></button>
+                    </div>
+                </div>
+                <?php endwhile; ?>
             <?php endif; ?>
-
-            <?php while ($f = mysqli_fetch_assoc($flights)):
-                $dep = new DateTime($f['departure_time']);
-                $arr = new DateTime($f['arrival_time']);
-                $dur = $dep->diff($arr);
-                $dur_str = ($dur->h ? $dur->h.'h ' : '') . $dur->i.'m';
-                $available = intval($f['available_seats']);
-            ?>
-            <div class="flight-card" onclick="window.location='seat_selection.php?flight_id=<?php echo $f['id']; ?>&passengers=<?php echo $passengers; ?>'">
-                <!-- AIRLINE -->
-                <div class="airline-info">
-                    <div class="airline-logo">✈️</div>
-                    <div>
-                        <div style="font-weight:600;font-size:14px"><?php echo $f['airline']; ?></div>
-                        <div class="flight-num"><?php echo $f['flight_number']; ?></div>
-                    </div>
-                </div>
-
-                <!-- DEPARTURE -->
-                <div class="route-col">
-                    <div class="route-time"><?php echo $dep->format('H:i'); ?></div>
-                    <div class="route-airport"><?php echo $f['origin_code']; ?></div>
-                    <div style="font-size:11px;color:var(--muted)"><?php echo $f['origin_city']; ?></div>
-                </div>
-
-                <!-- ROUTE LINE -->
-                <div style="text-align:center">
-                    <div class="route-duration"><?php echo $dur_str; ?></div>
-                    <div class="route-line">
-                        <div class="route-dot"></div>
-                        <div class="route-line-bar">
-                            <div class="route-plane"><i class="bi bi-airplane-fill"></i></div>
-                        </div>
-                        <div class="route-dot"></div>
-                    </div>
-                    <div style="font-size:11px;color:var(--muted)">Direct</div>
-                </div>
-
-                <!-- ARRIVAL -->
-                <div class="route-col">
-                    <div class="route-time"><?php echo $arr->format('H:i'); ?></div>
-                    <div class="route-airport"><?php echo $f['dest_code']; ?></div>
-                    <div style="font-size:11px;color:var(--muted)"><?php echo $f['dest_city']; ?></div>
-                </div>
-
-                <!-- PRICE + BUTTON -->
-                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-                    <div class="price-col">
-                        <div class="price-from">from</div>
-                        <div class="price-amount">IDR <?php echo number_format($f['min_price']); ?></div>
-                        <div class="price-seat" style="color:<?php echo $available<5?'var(--red)':'var(--green)'; ?>">
-                            <?php echo $available; ?> seat<?php echo $available!=1?'s':''; ?> left
-                        </div>
-                    </div>
-                    <button class="btn-select">Select <i class="bi bi-arrow-right"></i></button>
-                </div>
-            </div>
-            <?php endwhile; ?>
         </div>
     </div>
 </div>
