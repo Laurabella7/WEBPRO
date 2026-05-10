@@ -9,435 +9,258 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --dark:    #0d1117;
-            --dark2:   #161b27;
-            --card-bg: #1c2333;
-            --gold:    #c9a84c;
-            --gold2:   #e8c96a;
-            --text:    #e8eaf0;
-            --muted:   #8892a4;
-            --accent:  #4f8ef7;
-            --border:  rgba(255,255,255,0.08);
+            /* Dark Theme (Default) */
+            --bg-body: #0d1117;
+            --bg-sidebar: #161b27;
+            --bg-card: rgba(28, 35, 51, 0.9);
+            --text-main: #e8eaf0;
+            --text-muted: #8892a4;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --gold: #c9a84c;
+            --accent-bg: #1c2333;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body.light-theme {
+            /* Light Theme (Reference Style) */
+            --bg-body: #f4f7fa;
+            --bg-sidebar: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1a1d23;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --gold: #b38e2f;
+            --accent-bg: #f8fafc;
+        }
 
         body {
-            background: var(--dark);
-            color: var(--text);
+            background: var(--bg-body);
+            color: var(--text-main);
             font-family: 'DM Sans', sans-serif;
-            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* ── SIDEBAR ── */
         .sidebar {
             position: fixed; top: 0; left: 0;
-            width: 72px; height: 100vh;
-            background: var(--dark2);
-            border-right: 1px solid var(--border);
+            width: 80px; height: 100vh;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column;
-            align-items: center; padding: 24px 0;
+            align-items: center; padding: 30px 0;
             z-index: 100;
         }
-        .sidebar-logo {
-            color: var(--gold);
-            font-size: 24px; margin-bottom: 36px;
-        }
-        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .sidebar-logo { color: var(--gold); font-size: 28px; margin-bottom: 40px; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 15px; width: 100%; }
         .sidebar-item {
             display: flex; flex-direction: column;
-            align-items: center; gap: 4px;
-            padding: 12px 0; cursor: pointer;
-            color: var(--muted); font-size: 10px;
-            transition: all 0.2s; text-decoration: none;
-            border-left: 3px solid transparent;
+            align-items: center; gap: 5px;
+            padding: 15px 0; color: var(--text-muted);
+            text-decoration: none; font-size: 11px;
+            transition: 0.2s;
         }
-        .sidebar-item i { font-size: 20px; }
-        .sidebar-item:hover, .sidebar-item.active {
-            color: var(--text); background: rgba(255,255,255,0.04);
-            border-left-color: var(--gold);
-        }
+        .sidebar-item i { font-size: 22px; }
+        .sidebar-item.active, .sidebar-item:hover { color: var(--gold); background: rgba(179, 142, 47, 0.05); }
 
-        /* ── MAIN ── */
-        .main { margin-left: 72px; }
+        /* ── MAIN CONTENT ── */
+        .main { margin-left: 80px; padding-bottom: 50px; }
 
-        /* ── TOPBAR ── */
         .topbar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 32px;
-            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px;
         }
-        .promo-badge {
-            display: flex; align-items: center; gap: 8px;
-            background: rgba(201,168,76,0.12);
-            border: 1px solid rgba(201,168,76,0.3);
-            border-radius: 20px; padding: 6px 14px;
-            font-size: 13px; color: var(--gold);
-        }
-        .promo-badge .new-tag {
-            background: var(--gold); color: #000;
-            border-radius: 10px; padding: 2px 8px;
-            font-size: 11px; font-weight: 600;
-        }
-        .topbar-right { display: flex; align-items: center; gap: 16px; }
-        .currency-select {
-            background: var(--card-bg); border: 1px solid var(--border);
-            color: var(--text); border-radius: 8px;
-            padding: 6px 12px; font-size: 13px; cursor: pointer;
-        }
-        .avatar {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), #a07830);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 600; cursor: pointer;
+        .theme-toggle {
+            cursor: pointer; font-size: 20px; color: var(--text-muted);
+            background: var(--accent-bg); border: 1px solid var(--border-color);
+            padding: 8px 12px; border-radius: 10px;
         }
 
         /* ── HERO ── */
         .hero {
-            position: relative; overflow: hidden;
-            padding: 60px 32px 40px;
-            min-height: 420px;
+            padding: 40px 60px;
+            display: flex; align-items: center;
+            min-height: 400px;
+            background: radial-gradient(circle at 80% 20%, rgba(201,168,76,0.05) 0%, transparent 50%);
         }
-        .hero-bg {
-            position: absolute; inset: 0;
-            background: 
-                linear-gradient(to right, var(--dark) 35%, transparent 70%),
-                linear-gradient(to top, var(--dark) 0%, transparent 60%);
-            z-index: 1;
-        }
-        .hero-img {
-            position: absolute; right: 0; top: 0;
-            width: 65%; height: 100%;
-            object-fit: cover; opacity: 0.35;
-        }
-        .hero-bg-gradient {
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 70% 50%, rgba(79,142,247,0.08) 0%, transparent 70%);
-            z-index: 0;
-        }
-        .hero-content { position: relative; z-index: 2; max-width: 520px; }
-        .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 56px; line-height: 1.1;
-            margin-bottom: 16px;
-        }
-        .hero-title em { font-style: italic; color: var(--gold); }
-        .hero-subtitle { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
-        .btn-explore {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--text); color: var(--dark);
-            border: none; border-radius: 12px;
-            padding: 12px 24px; font-weight: 600; font-size: 14px;
-            text-decoration: none; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-explore:hover { background: var(--gold); color: #000; }
+        .hero-title { font-family: 'Playfair Display', serif; font-size: 64px; line-height: 1.1; font-weight: 700; }
+        .hero-title span { color: var(--gold); font-style: italic; }
 
         /* ── SEARCH CARD ── */
-        .search-section { padding: 0 32px 40px; }
+        .search-section { padding: 0 60px; margin-top: -40px; }
         .search-card {
-            background: rgba(28,35,51,0.9);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 24px;
-            backdrop-filter: blur(20px);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px; padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
         }
-        .trip-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+        .trip-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
         .trip-tab {
-            padding: 8px 20px; border-radius: 8px;
-            border: none; background: transparent;
-            color: var(--muted); font-size: 14px;
-            cursor: pointer; transition: all 0.2s;
-            font-family: 'DM Sans', sans-serif;
+            padding: 10px 24px; border-radius: 12px; border: none;
+            background: var(--accent-bg); color: var(--text-muted);
+            font-weight: 500; transition: 0.3s;
         }
-        .trip-tab.active {
-            background: var(--text); color: var(--dark); font-weight: 600;
-        }
-        .search-fields {
+        .trip-tab.active { background: var(--text-main); color: var(--bg-body); }
+
+        /* Modern Grid Layout */
+        .search-grid {
             display: grid;
-            grid-template-columns: 1fr auto 1fr 1fr 1fr auto;
-            gap: 12px; align-items: center;
+            grid-template-columns: 1.5fr auto 1.5fr 1fr 1fr auto;
+            gap: 20px; align-items: center;
         }
-        .field-group { display: flex; flex-direction: column; gap: 4px; }
-        .field-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .field-value {
-            font-size: 22px; font-weight: 600; color: var(--text);
+        .input-box {
+            background: var(--accent-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 12px 18px;
+            position: relative;
         }
-        .field-sub { font-size: 12px; color: var(--muted); }
-        .field-select {
-            background: transparent; border: none;
-            color: var(--text); font-size: 22px;
-            font-weight: 600; font-family: 'DM Sans', sans-serif;
-            cursor: pointer; outline: none; width: 100%;
+        .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .val-select {
+            width: 100%; background: transparent; border: none;
+            color: var(--text-main); font-size: 18px; font-weight: 700; outline: none;
         }
-        .field-select option { background: var(--dark2); }
-        .field-input {
-            background: transparent; border: none;
-            color: var(--text); font-size: 16px;
-            font-weight: 500; font-family: 'DM Sans', sans-serif;
-            outline: none; width: 100%;
-            color-scheme: dark;
+        
+        /* Price Indicator Style */
+        #price-info {
+            font-size: 11px; font-weight: 600; padding: 2px 8px;
+            border-radius: 20px; margin-top: 5px; display: inline-block;
         }
-        .swap-btn {
-            width: 36px; height: 36px; border-radius: 50%;
-            border: 1px solid var(--border);
-            background: var(--dark2);
-            color: var(--muted); display: flex;
-            align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.2s; flex-shrink: 0;
-        }
-        .swap-btn:hover { background: var(--gold); color: #000; border-color: var(--gold); }
-        .field-divider {
-            width: 1px; height: 40px;
-            background: var(--border); flex-shrink: 0;
-        }
-        .btn-search {
-            width: 48px; height: 48px; border-radius: 50%;
-            background: var(--gold);
-            border: none; color: #000;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; cursor: pointer; transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .btn-search:hover { background: var(--gold2); transform: scale(1.05); }
+        .price-low { background: #dcfce7; color: #166534; }
+        .price-high { background: #fee2e2; color: #991b1b; }
+        .price-normal { background: #f1f5f9; color: #475569; }
 
-        /* ── DESTINATIONS ── */
-        .destinations { padding: 0 32px 60px; }
-        .section-header {
-            display: flex; justify-content: space-between;
-            align-items: flex-end; margin-bottom: 20px;
-        }
-        .section-title { font-size: 24px; font-weight: 600; }
-        .section-sub { color: var(--muted); font-size: 13px; margin-top: 4px; }
-        .view-all {
-            display: flex; align-items: center; gap: 6px;
-            color: var(--gold); text-decoration: none; font-size: 14px;
-        }
-        .dest-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
-        .dest-card {
-            position: relative; border-radius: 16px;
-            overflow: hidden; cursor: pointer;
-            height: 180px; transition: transform 0.3s;
-        }
-        .dest-card:hover { transform: translateY(-4px); }
-        .dest-card-img {
-            width: 100%; height: 100%; object-fit: cover;
-            background: linear-gradient(135deg, #1a2a4a, #2a4a6a);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 48px;
-        }
-        .dest-card-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
-        }
-        .dest-card-info {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            padding: 16px;
-        }
-        .dest-city { font-weight: 600; font-size: 16px; }
-        .dest-country { font-size: 12px; color: rgba(255,255,255,0.6); }
-        .dest-price {
-            display: flex; align-items: center; gap: 4px;
-            font-size: 13px; color: var(--gold); margin-top: 4px;
-        }
-
-        /* ── RESPONSIVE ── */
-        @media (max-width: 900px) {
-            .search-fields { grid-template-columns: 1fr 1fr; }
-            .dest-grid { grid-template-columns: repeat(2,1fr); }
-            .hero-title { font-size: 36px; }
+        .btn-search-main {
+            width: 60px; height: 60px; border-radius: 18px;
+            background: var(--gold); border: none; color: white;
+            font-size: 24px; display: flex; align-items: center; justify-content: center;
         }
     </style>
 </head>
-<body>
+<body class="light-theme"> <?php include_once('db_connect.php'); ?>
 
-<?php include_once('db_connect.php'); ?>
-
-<!-- SIDEBAR -->
 <div class="sidebar">
-    <div class="sidebar-logo"><i class="bi bi-send-fill" style="transform:rotate(-45deg);display:inline-block"></i></div>
+    <div class="sidebar-logo"><i class="bi bi-wind"></i></div>
     <nav class="sidebar-nav">
-        <a href="index.php" class="sidebar-item active">
-            <i class="bi bi-house-fill"></i><span>Home</span>
-        </a>
-        <a href="search.php" class="sidebar-item">
-            <i class="bi bi-airplane-fill"></i><span>Flights</span>
-        </a>
-        <a href="my_booking.php" class="sidebar-item">
-            <i class="bi bi-journal-bookmark-fill"></i><span>Trips</span>
-        </a>
-        <a href="#" class="sidebar-item">
-            <i class="bi bi-compass-fill"></i><span>Explore</span>
-        </a>
-        <a href="#" class="sidebar-item">
-            <i class="bi bi-tag-fill"></i><span>Offers</span>
-        </a>
+        <a href="index.php" class="sidebar-item active"><i class="bi bi-house"></i><span>Home</span></a>
+        <a href="search.php" class="sidebar-item"><i class="bi bi-airplane"></i><span>Flights</span></a>
+        <a href="my_booking.php" class="sidebar-item"><i class="bi bi- luggage"></i><span>Trips</span></a>
     </nav>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-    <!-- TOPBAR -->
     <div class="topbar">
-        <div class="promo-badge">
-            <span class="new-tag">New</span>
-            Get 10% off your first booking &nbsp;<i class="bi bi-chevron-right"></i>
+        <div class="promo-badge" style="color: var(--gold); font-weight: 600;">
+            <span style="background: var(--gold); color: white; padding: 2px 8px; border-radius: 5px; font-size: 12px; margin-right: 10px;">New</span>
+            Get 10% off your first booking
         </div>
-        <div class="topbar-right">
-            <i class="bi bi-moon" style="color:var(--muted);font-size:18px;cursor:pointer"></i>
-            <select class="currency-select"><option>IDR</option><option>USD</option><option>JPY</option></select>
-            <div class="avatar">G</div>
+        <div class="topbar-right d-flex align-items-center gap-3">
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <i id="theme-icon" class="bi bi-moon"></i>
+            </div>
+            <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #ddd; display:flex; align-items:center; justify-content:center; font-weight: bold;">G</div>
         </div>
     </div>
 
-    <!-- HERO -->
     <div class="hero">
-        <div class="hero-bg-gradient"></div>
-        <div class="hero-bg"></div>
-        <!-- decorative bg using CSS gradient as placeholder for the scenic image -->
-        <div style="position:absolute;right:0;top:0;width:65%;height:100%;
-            background:radial-gradient(ellipse at 60% 40%, #1a3a6a 0%, #0a1525 60%, #0d1117 100%);
-            opacity:0.6;z-index:0;">
-            <!-- plane icon decoration -->
-            <i class="bi bi-airplane" style="position:absolute;top:60px;left:40%;
-                font-size:14px;color:rgba(255,255,255,0.3);transform:rotate(45deg)"></i>
-            <div style="position:absolute;top:55px;left:25%;right:10%;height:1px;
-                background:linear-gradient(to right,transparent,rgba(255,255,255,0.15),transparent)"></div>
-        </div>
         <div class="hero-content">
-            <h1 class="hero-title">Fly to your<br>dream <em>destination</em></h1>
-            <p class="hero-subtitle">Find the best flight deals to anywhere<br>in the world, fast and easy.</p>
-            <a href="search.php" class="btn-explore">Explore Now &nbsp;<i class="bi bi-arrow-up-right"></i></a>
+            <h1 class="hero-title">Fly to your<br>dream <span>destination</span></h1>
+            <p style="color: var(--text-muted); margin-top: 20px;">Find the best flight deals to anywhere in the world.</p>
         </div>
     </div>
 
-    <!-- SEARCH -->
     <div class="search-section">
         <div class="search-card">
             <div class="trip-tabs">
-                <button class="trip-tab active">One Way</button>
-                <button class="trip-tab">Round Trip</button>
-                <button class="trip-tab">Multi City</button>
+                <button class="trip-tab active" onclick="setTrip('oneway')">One Way</button>
+                <button class="trip-tab" onclick="setTrip('roundtrip')">Round Trip</button>
             </div>
+
             <form action="search.php" method="GET">
-                <div class="search-fields">
-                    <!-- FROM -->
-                    <div class="field-group">
-                        <div class="field-label">From</div>
-                        <?php
-                        $airports = mysqli_query($conn, "SELECT * FROM airport ORDER BY city");
-                        $airports_arr = [];
-                        while($r = mysqli_fetch_assoc($airports)) $airports_arr[] = $r;
-                        ?>
-                        <select name="origin_id" class="field-select" required>
-                            <?php foreach($airports_arr as $ap): ?>
-                            <option value="<?php echo $ap['id']; ?>"
-                                <?php echo ($ap['code']=='CGK') ? 'selected' : ''; ?>>
-                                <?php echo $ap['code']; ?>
-                            </option>
-                            <?php endforeach; ?>
+                <div class="search-grid">
+                    <div class="input-box">
+                        <div class="label">From</div>
+                        <select name="origin_id" class="val-select">
+                            <option value="1">CGK (Jakarta)</option>
+                            <option value="2">NRT (Tokyo)</option>
                         </select>
-                        <div class="field-sub">
-                            <?php foreach($airports_arr as $ap) if($ap['code']=='CGK') echo $ap['city'].' - '.$ap['name']; ?>
-                        </div>
                     </div>
 
-                    <!-- SWAP -->
-                    <button type="button" class="swap-btn"><i class="bi bi-arrow-left-right"></i></button>
+                    <i class="bi bi-arrow-left-right" style="color: var(--text-muted); font-size: 20px;"></i>
 
-                    <!-- TO -->
-                    <div class="field-group">
-                        <div class="field-label">To</div>
-                        <select name="destination_id" class="field-select" required>
-                            <?php foreach($airports_arr as $ap): ?>
-                            <option value="<?php echo $ap['id']; ?>"
-                                <?php echo ($ap['code']=='NRT') ? 'selected' : ''; ?>>
-                                <?php echo $ap['code']; ?>
-                            </option>
-                            <?php endforeach; ?>
+                    <div class="input-box">
+                        <div class="label">To</div>
+                        <select name="destination_id" class="val-select">
+                            <option value="2" selected>NRT (Tokyo)</option>
+                            <option value="1">CGK (Jakarta)</option>
                         </select>
-                        <div class="field-sub">
-                            <?php foreach($airports_arr as $ap) if($ap['code']=='NRT') echo $ap['city'].' - '.$ap['name']; ?>
-                        </div>
                     </div>
 
-                    <div class="field-divider"></div>
-
-                    <!-- DEPARTURE -->
-                    <div class="field-group">
-                        <div class="field-label">Departure</div>
-                        <input type="date" name="departure_date" class="field-input"
-                            value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
+                    <div class="input-box">
+                        <div class="label">Departure</div>
+                        <input type="date" id="dep-date" name="departure_date" class="val-select" style="font-size: 14px;" onchange="checkPrice(this.value)">
+                        <span id="price-indicator" style="display:none;"></span>
                     </div>
 
-                    <!-- PASSENGERS -->
-                    <div class="field-group">
-                        <div class="field-label">Passengers</div>
-                        <select name="passengers" class="field-select" style="font-size:16px">
-                            <option value="1">1 Passenger</option>
-                            <option value="2">2 Passengers</option>
-                            <option value="3">3 Passengers</option>
-                            <option value="4">4 Passengers</option>
-                        </select>
-                        <div class="field-sub">Economy</div>
+                    <div class="input-box" id="return-box" style="opacity: 0.5; pointer-events: none;">
+                        <div class="label">Return</div>
+                        <input type="date" name="return_date" class="val-select" style="font-size: 14px;">
                     </div>
 
-                    <!-- SEARCH BTN -->
-                    <button type="submit" class="btn-search"><i class="bi bi-search"></i></button>
+                    <button type="submit" class="btn-search-main">
+                        <i class="bi bi-search"></i>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- DESTINATIONS -->
-    <div class="destinations">
-        <div class="section-header">
-            <div>
-                <div class="section-title">Explore the world</div>
-                <div class="section-sub">Popular destinations around the world</div>
-            </div>
-            <a href="search.php" class="view-all">View All &nbsp;<i class="bi bi-arrow-right"></i></a>
-        </div>
-        <div class="dest-grid">
-            <?php
-            $dests = [
-                ['icon'=>'🗼','city'=>'Tokyo','country'=>'Japan','price'=>'IDR 4.2M','origin'=>1,'dest'=>2],
-                ['icon'=>'🏖️','city'=>'Bali','country'=>'Indonesia','price'=>'IDR 1.5M','origin'=>1,'dest'=>3],
-                ['icon'=>'🏙️','city'=>'Seoul','country'=>'South Korea','price'=>'IDR 3.8M','origin'=>1,'dest'=>4],
-                ['icon'=>'🎡','city'=>'London','country'=>'United Kingdom','price'=>'IDR 6.7M','origin'=>1,'dest'=>5],
-            ];
-            foreach($dests as $d):
-            ?>
-            <div class="dest-card" onclick="window.location='search.php?origin_id=<?php echo $d['origin'];?>&destination_id=<?php echo $d['dest'];?>'">
-                <div class="dest-card-img"><?php echo $d['icon']; ?></div>
-                <div class="dest-card-overlay"></div>
-                <div class="dest-card-info">
-                    <div class="dest-city"><?php echo $d['city']; ?></div>
-                    <div class="dest-country"><?php echo $d['country']; ?></div>
-                    <div class="dest-price">From <?php echo $d['price']; ?> &nbsp;<i class="bi bi-arrow-right"></i></div>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-
-</div><!-- /main -->
+</div>
 
 <script>
-// Swap origin/destination
-document.querySelector('.swap-btn')?.addEventListener('click', function() {
-    const o = document.querySelector('[name=origin_id]');
-    const d = document.querySelector('[name=destination_id]');
-    const tmp = o.value; o.value = d.value; d.value = tmp;
-});
-// Tab switching (visual only)
-document.querySelectorAll('.trip-tab').forEach(t => {
-    t.addEventListener('click', () => {
-        document.querySelectorAll('.trip-tab').forEach(x => x.classList.remove('active'));
-        t.classList.add('active');
-    });
-});
+    function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById('theme-icon');
+        body.classList.toggle('light-theme');
+        
+        if(body.classList.contains('light-theme')) {
+            icon.className = 'bi bi-moon';
+        } else {
+            icon.className = 'bi bi-sun';
+        }
+    }
+
+    function setTrip(type) {
+        const tabs = document.querySelectorAll('.trip-tab');
+        const returnBox = document.getElementById('return-box');
+        tabs.forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+
+        if(type === 'roundtrip') {
+            returnBox.style.opacity = "1";
+            returnBox.style.pointerEvents = "auto";
+        } else {
+            returnBox.style.opacity = "0.5";
+            returnBox.style.pointerEvents = "none";
+        }
+    }
+
+    function checkPrice(date) {
+        const indicator = document.getElementById('price-indicator');
+        indicator.style.display = "inline-block";
+        
+        // Simulating price check logic
+        const day = new Date(date).getDay();
+        if(day === 0 || day === 6) { // Weekends
+            indicator.innerHTML = "Price: High Peak 📈";
+            indicator.className = "price-high";
+            indicator.style.color = "red";
+        } else if (day === 2 || day === 3) { // Midweek
+            indicator.innerHTML = "Price: Best Deal ✨";
+            indicator.className = "price-low";
+            indicator.style.color = "green";
+        } else {
+            indicator.innerHTML = "Price: Normal";
+            indicator.className = "price-normal";
+            indicator.style.color = "gray";
+        }
+    }
 </script>
 </body>
 </html>
