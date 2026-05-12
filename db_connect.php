@@ -1,14 +1,11 @@
 <?php
-// ── Database Configuration ──────────────────────────────────
 $servername = "localhost";
 $username   = "root";
 $password   = "";
-$dbname     = "flight_ticket";
+$dbname     = "flight_booking"; // Updated to match the new schema
 
-// Create connection
 $conn = mysqli_connect($servername, $username, $password, $dbname);
 
-// Check connection
 if (mysqli_connect_errno()) {
     die("Connection failed: " . mysqli_connect_error());
 }

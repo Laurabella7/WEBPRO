@@ -20,14 +20,12 @@
         .main{margin-left:72px;padding:40px;max-width:800px;}
         .page-title{font-size:28px;font-weight:600;margin-bottom:4px;}
         .page-sub{color:var(--muted);font-size:14px;margin-bottom:32px;}
-
         .search-box{display:flex;gap:12px;margin-bottom:32px;}
         .code-input{flex:1;background:var(--card-bg);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:14px 18px;font-size:16px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;letter-spacing:2px;text-transform:uppercase;}
         .code-input:focus{border-color:var(--gold);}
         .code-input::placeholder{letter-spacing:0;text-transform:none;color:var(--muted);}
         .btn-find{background:var(--gold);border:none;color:#000;border-radius:12px;padding:14px 24px;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
         .btn-find:hover{background:var(--gold2);}
-
         .ticket-card{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:16px;}
         .ticket-header{background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(79,142,247,.1));padding:24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
         .ticket-route{font-size:28px;font-weight:700;}
@@ -39,7 +37,6 @@
         .ticket-label{color:var(--muted);}
         .ticket-value{font-weight:500;}
         .booking-code-display{background:var(--dark2);border-radius:10px;padding:12px 20px;font-size:20px;font-weight:700;letter-spacing:3px;color:var(--gold);text-align:center;margin-top:16px;}
-
         .no-result{text-align:center;padding:60px;color:var(--muted);}
         .no-result i{font-size:48px;display:block;margin-bottom:16px;}
     </style>
@@ -55,17 +52,25 @@ $code = preg_replace('/[^A-Z0-9]/', '', $code);
 $reservations = [];
 if ($code) {
     $code_safe = mysqli_real_escape_string($conn, $code);
-    $q = mysqli_query($conn,
-        "SELECT r.*, s.seat_number, s.class, s.price,
-         f.flight_number, f.airline, f.departure_time, f.arrival_time,
-         a1.code AS origin_code, a1.city AS origin_city,
-         a2.code AS dest_code, a2.city AS dest_city
-         FROM reservation r
-         JOIN seat s ON r.seat_id = s.id
-         JOIN flight f ON s.flight_id = f.id
-         JOIN airport a1 ON f.origin_id = a1.id
-         JOIN airport a2 ON f.destination_id = a2.id
-         WHERE r.booking_code = '$code_safe'");
+    
+    // IN (1, 7) corresponds to Sunday and Saturday in MySQL's DAYOFWEEK function
+    $query = "SELECT b.booking_code, b.contact_email, b.contact_phone, b.total_amount, b.booked_at,
+              t.passenger_name, t.seat_number, t.travel_class,
+              fp.price * (CASE WHEN DAYOFWEEK(fs.departure_time) IN (1, 7) THEN 1.2 ELSE 1.0 END) AS seat_price,
+              fr.flight_number, al.name AS airline_name, fs.departure_time, fs.arrival_time,
+              a1.code AS origin_code, a1.city AS origin_city,
+              a2.code AS dest_code, a2.city AS dest_city
+              FROM booking b
+              JOIN ticket t ON b.id = t.booking_id
+              JOIN flight_schedule fs ON t.flight_schedule_id = fs.id
+              JOIN flight_route fr ON fs.flight_route_id = fr.id
+              JOIN airline al ON fr.airline_id = al.id
+              JOIN airport a1 ON fr.origin_id = a1.id
+              JOIN airport a2 ON fr.destination_id = a2.id
+              LEFT JOIN flight_pricing fp ON fp.flight_schedule_id = fs.id AND fp.travel_class = t.travel_class
+              WHERE b.booking_code = '$code_safe'";
+
+    $q = mysqli_query($conn, $query);
     while ($row = mysqli_fetch_assoc($q)) $reservations[] = $row;
 }
 ?>
@@ -76,8 +81,6 @@ if ($code) {
         <a href="index.php" class="sidebar-item"><i class="bi bi-house-fill"></i><span>Home</span></a>
         <a href="search.php" class="sidebar-item"><i class="bi bi-airplane-fill"></i><span>Flights</span></a>
         <a href="my_booking.php" class="sidebar-item active"><i class="bi bi-journal-bookmark-fill"></i><span>Trips</span></a>
-        <a href="#" class="sidebar-item"><i class="bi bi-compass-fill"></i><span>Explore</span></a>
-        <a href="#" class="sidebar-item"><i class="bi bi-tag-fill"></i><span>Offers</span></a>
     </nav>
 </div>
 
@@ -98,39 +101,46 @@ if ($code) {
     </div>
 
     <?php elseif (!empty($reservations)): ?>
+    
+    <?php 
+        $first_ticket = $reservations[0]; 
+        $master_total = $first_ticket['total_amount'];
+    ?>
+    
     <?php foreach ($reservations as $r):
         $dep = new DateTime($r['departure_time']);
         $arr = new DateTime($r['arrival_time']);
         $dur = $dep->diff($arr);
         $dur_str = ($dur->h ? $dur->h.'h ' : '') . $dur->i.'m';
-        $subtotal = $r['price'];
-        $tax = round($subtotal * 0.1);
-        $total = $subtotal + $tax;
     ?>
     <div class="ticket-card">
         <div class="ticket-header">
             <div>
                 <div class="ticket-route"><?php echo $r['origin_code'].' → '.$r['dest_code']; ?></div>
-                <div class="ticket-airline"><?php echo $r['airline'].' · '.$r['flight_number']; ?></div>
+                <div class="ticket-airline"><?php echo $r['airline_name'].' · '.$r['flight_number']; ?></div>
             </div>
             <span class="ticket-status"><i class="bi bi-check-circle"></i> Confirmed</span>
         </div>
         <div class="ticket-body">
             <div class="ticket-row"><span class="ticket-label">Passenger</span><span class="ticket-value"><?php echo htmlspecialchars($r['passenger_name']); ?></span></div>
-            <div class="ticket-row"><span class="ticket-label">Email</span><span class="ticket-value"><?php echo htmlspecialchars($r['passenger_email']); ?></span></div>
-            <div class="ticket-row"><span class="ticket-label">Phone</span><span class="ticket-value"><?php echo htmlspecialchars($r['passenger_phone']); ?></span></div>
-            <div class="ticket-row"><span class="ticket-label">Seat</span><span class="ticket-value"><?php echo $r['seat_number'].' ('.$r['class'].')'; ?></span></div>
+            <div class="ticket-row"><span class="ticket-label">Contact Email</span><span class="ticket-value"><?php echo htmlspecialchars($r['contact_email']); ?></span></div>
+            <div class="ticket-row"><span class="ticket-label">Seat</span><span class="ticket-value"><?php echo $r['seat_number'].' ('.$r['travel_class'].')'; ?></span></div>
             <div class="ticket-row"><span class="ticket-label">Departure</span><span class="ticket-value"><?php echo $dep->format('d M Y, H:i'); ?></span></div>
             <div class="ticket-row"><span class="ticket-label">Arrival</span><span class="ticket-value"><?php echo $arr->format('d M Y, H:i'); ?></span></div>
             <div class="ticket-row"><span class="ticket-label">Duration</span><span class="ticket-value"><?php echo $dur_str; ?></span></div>
-            <div class="ticket-row"><span class="ticket-label">Seat Price</span><span class="ticket-value">IDR <?php echo number_format($subtotal); ?></span></div>
-            <div class="ticket-row"><span class="ticket-label">Tax (10%)</span><span class="ticket-value">IDR <?php echo number_format($tax); ?></span></div>
-            <div class="ticket-row" style="font-size:16px;font-weight:700"><span style="color:var(--gold)">Total Paid</span><span style="color:var(--gold)">IDR <?php echo number_format($total); ?></span></div>
+            <div class="ticket-row"><span class="ticket-label">Seat Price</span><span class="ticket-value">IDR <?php echo number_format($r['seat_price']); ?></span></div>
             <div class="ticket-row"><span class="ticket-label">Booked At</span><span class="ticket-value"><?php echo (new DateTime($r['booked_at']))->format('d M Y, H:i'); ?></span></div>
-            <div class="booking-code-display"><?php echo $r['booking_code']; ?></div>
         </div>
     </div>
     <?php endforeach; ?>
+
+    <div class="ticket-card" style="padding:24px;">
+        <div class="ticket-row" style="font-size:18px;font-weight:700;border:none;">
+            <span style="color:var(--gold)">Master Booking Total (All Passengers)</span>
+            <span style="color:var(--gold)">IDR <?php echo number_format($master_total); ?></span>
+        </div>
+        <div class="booking-code-display"><?php echo $first_ticket['booking_code']; ?></div>
+    </div>
 
     <?php elseif (!$code): ?>
     <div class="no-result">

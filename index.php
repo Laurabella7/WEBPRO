@@ -9,69 +9,29 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            /* Dark Theme (Default) */
-            --bg-body: #0d1117;
-            --bg-sidebar: #161b27;
-            --bg-card: rgba(28, 35, 51, 0.9);
-            --text-main: #e8eaf0;
-            --text-muted: #8892a4;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --gold: #c9a84c;
+            --dark: #0d1117; --dark2: #161b27; --card-bg: #1c2333;
+            --gold: #c9a84c; --gold2: #e8c96a; --text: #e8eaf0;
+            --muted: #8892a4; --border: rgba(255,255,255,0.08);
             --accent-bg: #1c2333;
         }
 
-        body.light-theme {
-            /* Light Theme (Reference Style) */
-            --bg-body: #f4f7fa;
-            --bg-sidebar: #ffffff;
-            --bg-card: #ffffff;
-            --text-main: #1a1d23;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --gold: #b38e2f;
-            --accent-bg: #f8fafc;
-        }
-
-        body {
-            background: var(--bg-body);
-            color: var(--text-main);
-            font-family: 'DM Sans', sans-serif;
-            transition: background 0.3s, color 0.3s;
-        }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; }
 
         /* ── SIDEBAR ── */
-        .sidebar {
-            position: fixed; top: 0; left: 0;
-            width: 80px; height: 100vh;
-            background: var(--bg-sidebar);
-            border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column;
-            align-items: center; padding: 30px 0;
-            z-index: 100;
-        }
-        .sidebar-logo { color: var(--gold); font-size: 28px; margin-bottom: 40px; }
-        .sidebar-nav { display: flex; flex-direction: column; gap: 15px; width: 100%; }
-        .sidebar-item {
-            display: flex; flex-direction: column;
-            align-items: center; gap: 5px;
-            padding: 15px 0; color: var(--text-muted);
-            text-decoration: none; font-size: 11px;
-            transition: 0.2s;
-        }
-        .sidebar-item i { font-size: 22px; }
-        .sidebar-item.active, .sidebar-item:hover { color: var(--gold); background: rgba(179, 142, 47, 0.05); }
+        .sidebar { position:fixed;top:0;left:0;width:72px;height:100vh;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:24px 0;z-index:100; }
+        .sidebar-logo { color:var(--gold);font-size:24px;margin-bottom:36px; }
+        .sidebar-nav { display:flex;flex-direction:column;gap:8px;width:100%; }
+        .sidebar-item { display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0;cursor:pointer;color:var(--muted);font-size:10px;transition:all .2s;text-decoration:none;border-left:3px solid transparent; }
+        .sidebar-item i { font-size:20px; }
+        .sidebar-item:hover,.sidebar-item.active { color:var(--text);background:rgba(255,255,255,.04);border-left-color:var(--gold); }
 
         /* ── MAIN CONTENT ── */
-        .main { margin-left: 80px; padding-bottom: 50px; }
+        .main { margin-left: 72px; padding-bottom: 50px; }
 
         .topbar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 40px;
-        }
-        .theme-toggle {
-            cursor: pointer; font-size: 20px; color: var(--text-muted);
-            background: var(--accent-bg); border: 1px solid var(--border-color);
-            padding: 8px 12px; border-radius: 10px;
         }
 
         /* ── HERO ── */
@@ -87,18 +47,18 @@
         /* ── SEARCH CARD ── */
         .search-section { padding: 0 60px; margin-top: -40px; }
         .search-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 24px; padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         .trip-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
         .trip-tab {
             padding: 10px 24px; border-radius: 12px; border: none;
-            background: var(--accent-bg); color: var(--text-muted);
-            font-weight: 500; transition: 0.3s;
+            background: var(--dark2); color: var(--muted);
+            font-weight: 500; transition: 0.3s; cursor: pointer;
         }
-        .trip-tab.active { background: var(--text-main); color: var(--bg-body); }
+        .trip-tab.active { background: var(--gold); color: #000; }
 
         /* Modern Grid Layout */
         .search-grid {
@@ -107,62 +67,68 @@
             gap: 20px; align-items: center;
         }
         .input-box {
-            background: var(--accent-bg);
-            border: 1px solid var(--border-color);
+            background: var(--dark2);
+            border: 1px solid var(--border);
             border-radius: 16px; padding: 12px 18px;
-            position: relative;
+            position: relative; transition: border-color 0.2s;
         }
-        .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .input-box:focus-within { border-color: var(--gold); }
+        .label { font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
         .val-select {
             width: 100%; background: transparent; border: none;
-            color: var(--text-main); font-size: 18px; font-weight: 700; outline: none;
+            color: var(--text); font-size: 18px; font-weight: 700; outline: none;
         }
+        .val-select option { background: var(--dark2); color: var(--text); }
         
-        /* Price Indicator Style */
-        #price-info {
-            font-size: 11px; font-weight: 600; padding: 2px 8px;
-            border-radius: 20px; margin-top: 5px; display: inline-block;
+        .swap-btn {
+            color: var(--muted); font-size: 20px; cursor: pointer;
+            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 50%; background: var(--dark2); border: 1px solid var(--border);
         }
-        .price-low { background: #dcfce7; color: #166534; }
-        .price-high { background: #fee2e2; color: #991b1b; }
-        .price-normal { background: #f1f5f9; color: #475569; }
+        .swap-btn:hover { color: var(--gold); border-color: var(--gold); transform: rotate(180deg); }
 
         .btn-search-main {
             width: 60px; height: 60px; border-radius: 18px;
-            background: var(--gold); border: none; color: white;
+            background: var(--gold); border: none; color: #000;
             font-size: 24px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s;
         }
+        .btn-search-main:hover { background: var(--gold2); transform: scale(1.05); }
     </style>
 </head>
-<body class="light-theme"> <?php include_once('db_connect.php'); ?>
+<body> 
+<?php 
+include_once('db_connect.php'); 
+// Fetch dynamic airports for the select boxes
+$airports_q = mysqli_query($conn, "SELECT * FROM airport ORDER BY city");
+$airports = [];
+while($a = mysqli_fetch_assoc($airports_q)) $airports[] = $a;
+?>
 
 <div class="sidebar">
-    <div class="sidebar-logo"><i class="bi bi-wind"></i></div>
+    <div class="sidebar-logo"><i class="bi bi-send-fill" style="transform:rotate(-45deg);display:inline-block"></i></div>
     <nav class="sidebar-nav">
-        <a href="index.php" class="sidebar-item active"><i class="bi bi-house"></i><span>Home</span></a>
-        <a href="search.php" class="sidebar-item"><i class="bi bi-airplane"></i><span>Flights</span></a>
-        <a href="my_booking.php" class="sidebar-item"><i class="bi bi- luggage"></i><span>Trips</span></a>
+        <a href="index.php" class="sidebar-item active"><i class="bi bi-house-fill"></i><span>Home</span></a>
+        <a href="search.php" class="sidebar-item"><i class="bi bi-airplane-fill"></i><span>Flights</span></a>
+        <a href="my_booking.php" class="sidebar-item"><i class="bi bi-journal-bookmark-fill"></i><span>Trips</span></a>
     </nav>
 </div>
 
 <div class="main">
     <div class="topbar">
         <div class="promo-badge" style="color: var(--gold); font-weight: 600;">
-            <span style="background: var(--gold); color: white; padding: 2px 8px; border-radius: 5px; font-size: 12px; margin-right: 10px;">New</span>
+            <span style="background: var(--gold); color: #000; padding: 2px 8px; border-radius: 5px; font-size: 12px; margin-right: 10px;">New</span>
             Get 10% off your first booking
         </div>
         <div class="topbar-right d-flex align-items-center gap-3">
-            <div class="theme-toggle" onclick="toggleTheme()">
-                <i id="theme-icon" class="bi bi-moon"></i>
-            </div>
-            <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: #ddd; display:flex; align-items:center; justify-content:center; font-weight: bold;">G</div>
+            <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--dark2); border: 1px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight: bold; color: var(--gold);">N</div>
         </div>
     </div>
 
     <div class="hero">
         <div class="hero-content">
             <h1 class="hero-title">Fly to your<br>dream <span>destination</span></h1>
-            <p style="color: var(--text-muted); margin-top: 20px;">Find the best flight deals to anywhere in the world.</p>
+            <p style="color: var(--muted); margin-top: 20px;">Find the best flight deals to anywhere in the world.</p>
         </div>
     </div>
 
@@ -173,35 +139,44 @@
                 <button class="trip-tab" onclick="setTrip('roundtrip')">Round Trip</button>
             </div>
 
-            <form action="search.php" method="GET">
+            <form action="search.php" method="GET" id="searchForm">
+                <input type="hidden" name="trip_type" id="trip_type_input" value="oneway">
+                
                 <div class="search-grid">
                     <div class="input-box">
                         <div class="label">From</div>
-                        <select name="origin_id" class="val-select">
-                            <option value="1">CGK (Jakarta)</option>
-                            <option value="2">NRT (Tokyo)</option>
+                        <select name="origin_id" id="origin_id" class="val-select">
+                            <?php foreach($airports as $ap): ?>
+                            <option value="<?php echo $ap['id']; ?>" <?php echo $ap['code']=='CGK'?'selected':''; ?>>
+                                <?php echo $ap['code']; ?> (<?php echo $ap['city']; ?>)
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <i class="bi bi-arrow-left-right" style="color: var(--text-muted); font-size: 20px;"></i>
+                    <div class="swap-btn" onclick="swapAirports()" title="Swap Origin and Destination">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </div>
 
                     <div class="input-box">
                         <div class="label">To</div>
-                        <select name="destination_id" class="val-select">
-                            <option value="2" selected>NRT (Tokyo)</option>
-                            <option value="1">CGK (Jakarta)</option>
+                        <select name="destination_id" id="destination_id" class="val-select">
+                            <?php foreach($airports as $ap): ?>
+                            <option value="<?php echo $ap['id']; ?>" <?php echo $ap['code']=='NRT'?'selected':''; ?>>
+                                <?php echo $ap['code']; ?> (<?php echo $ap['city']; ?>)
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
                     <div class="input-box">
                         <div class="label">Departure</div>
-                        <input type="date" id="dep-date" name="departure_date" class="val-select" style="font-size: 14px;" onchange="checkPrice(this.value)">
-                        <span id="price-indicator" style="display:none;"></span>
+                        <input type="date" id="dep-date" name="departure_date" class="val-select" style="font-size: 14px;" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
                     </div>
 
                     <div class="input-box" id="return-box" style="opacity: 0.5; pointer-events: none;">
                         <div class="label">Return</div>
-                        <input type="date" name="return_date" class="val-select" style="font-size: 14px;">
+                        <input type="date" id="ret-date" name="return_date" class="val-select" style="font-size: 14px;" disabled>
                     </div>
 
                     <button type="submit" class="btn-search-main">
@@ -214,52 +189,45 @@
 </div>
 
 <script>
-    function toggleTheme() {
-        const body = document.body;
-        const icon = document.getElementById('theme-icon');
-        body.classList.toggle('light-theme');
-        
-        if(body.classList.contains('light-theme')) {
-            icon.className = 'bi bi-moon';
-        } else {
-            icon.className = 'bi bi-sun';
-        }
-    }
-
+    // ── Trip Type Toggle Logic ──
     function setTrip(type) {
         const tabs = document.querySelectorAll('.trip-tab');
         const returnBox = document.getElementById('return-box');
+        const returnInput = document.getElementById('ret-date');
+        const typeInput = document.getElementById('trip_type_input');
+        
         tabs.forEach(t => t.classList.remove('active'));
         event.target.classList.add('active');
+        typeInput.value = type;
 
         if(type === 'roundtrip') {
             returnBox.style.opacity = "1";
             returnBox.style.pointerEvents = "auto";
+            returnInput.disabled = false;
+            returnInput.required = true;
+            
+            // Auto-set return date to departure date + 2 days if empty
+            if(!returnInput.value) {
+                let depDate = new Date(document.getElementById('dep-date').value);
+                depDate.setDate(depDate.getDate() + 2);
+                returnInput.value = depDate.toISOString().split('T')[0];
+            }
         } else {
             returnBox.style.opacity = "0.5";
             returnBox.style.pointerEvents = "none";
+            returnInput.disabled = true;
+            returnInput.required = false;
         }
     }
 
-    function checkPrice(date) {
-        const indicator = document.getElementById('price-indicator');
-        indicator.style.display = "inline-block";
+    // ── Swap Origin and Destination ──
+    function swapAirports() {
+        const originSelect = document.getElementById('origin_id');
+        const destSelect = document.getElementById('destination_id');
         
-        // Simulating price check logic
-        const day = new Date(date).getDay();
-        if(day === 0 || day === 6) { // Weekends
-            indicator.innerHTML = "Price: High Peak 📈";
-            indicator.className = "price-high";
-            indicator.style.color = "red";
-        } else if (day === 2 || day === 3) { // Midweek
-            indicator.innerHTML = "Price: Best Deal ✨";
-            indicator.className = "price-low";
-            indicator.style.color = "green";
-        } else {
-            indicator.innerHTML = "Price: Normal";
-            indicator.className = "price-normal";
-            indicator.style.color = "gray";
-        }
+        const tempValue = originSelect.value;
+        originSelect.value = destSelect.value;
+        destSelect.value = tempValue;
     }
 </script>
 </body>
