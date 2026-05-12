@@ -8,73 +8,90 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root { --dark:#0d1117; --dark2:#161b27; --card-bg:#1c2333; --gold:#c9a84c; --gold2:#e8c96a; --text:#e8eaf0; --muted:#8892a4; --accent:#4f8ef7; --border:rgba(255,255,255,0.08); --green:#2ecc71; --red:#e74c3c; }
+        :root {
+            --bg: #f0f4f8;
+            --bg2: #e4eaf2;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1a2340;
+            --sidebar-active: #2a3a60;
+            --gold: #c47d20;
+            --gold2: #e09830;
+            --gold-light: #fdf3e3;
+            --text: #1a2340;
+            --muted: #7a8aaa;
+            --border: rgba(26,35,64,0.10);
+            --sky: #2563eb;
+            --sky2: #3b82f6;
+            --shadow: 0 4px 32px rgba(37,99,235,0.08);
+            --green: #16a34a;
+            --red: #dc2626;
+        }
         * { box-sizing:border-box; margin:0; padding:0; }
-        body { background:var(--dark); color:var(--text); font-family:'DM Sans',sans-serif; }
-        .sidebar { position:fixed;top:0;left:0;width:72px;height:100vh;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:24px 0;z-index:100; }
-        .sidebar-logo { color:var(--gold);font-size:24px;margin-bottom:36px; }
+        body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; }
+        .sidebar { position:fixed;top:0;left:0;width:72px;height:100vh;background:var(--sidebar-bg);border-right:none;display:flex;flex-direction:column;align-items:center;padding:24px 0;z-index:100;box-shadow:4px 0 24px rgba(26,35,64,0.12); }
+        .sidebar-logo { color:var(--gold2);font-size:24px;margin-bottom:36px; }
         .sidebar-nav { display:flex;flex-direction:column;gap:8px;width:100%; }
-        .sidebar-item { display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0;cursor:pointer;color:var(--muted);font-size:10px;transition:all .2s;text-decoration:none;border-left:3px solid transparent; }
+        .sidebar-item { display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0;cursor:pointer;color:rgba(255,255,255,0.45);font-size:10px;transition:all .2s;text-decoration:none;border-left:3px solid transparent; }
         .sidebar-item i { font-size:20px; }
-        .sidebar-item:hover,.sidebar-item.active { color:var(--text);background:rgba(255,255,255,.04);border-left-color:var(--gold); }
+        .sidebar-item:hover { color:rgba(255,255,255,0.85);background:rgba(255,255,255,.06);border-left-color:var(--gold2); }
+        .sidebar-item.active { color:#fff;background:var(--sidebar-active);border-left-color:var(--gold2); }
         .main { margin-left:72px; min-height:100vh; }
-        .topbar { display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border); }
+        .topbar { display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:var(--card-bg); }
         .breadcrumb-nav { display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px; }
         .breadcrumb-nav a { color:var(--muted);text-decoration:none; }
-        .breadcrumb-nav a:hover { color:var(--gold); }
+        .breadcrumb-nav a:hover { color:var(--sky); }
         .breadcrumb-nav .active { color:var(--text); }
-        
+
         /* ── Trip Progress Bar ── */
-        .trip-progress { display:flex;align-items:center;background:var(--dark2);padding:12px 32px;border-bottom:1px solid var(--border); }
+        .trip-progress { display:flex;align-items:center;background:var(--card-bg);padding:12px 32px;border-bottom:1px solid var(--border); }
         .tp-step { display:flex;align-items:center;gap:12px;opacity:0.5; }
         .tp-step.active { opacity:1; }
         .tp-step.done { opacity:0.8; }
-        .tp-dot { width:32px;height:32px;border-radius:50%;background:var(--card-bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px; }
-        .tp-step.active .tp-dot { background:var(--gold);color:#000;border-color:var(--gold); }
-        .tp-step.done .tp-dot { background:var(--green);color:#000;border-color:var(--green); }
+        .tp-dot { width:32px;height:32px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--text); }
+        .tp-step.active .tp-dot { background:var(--sky);color:#fff;border-color:var(--sky); }
+        .tp-step.done .tp-dot { background:var(--green);color:#fff;border-color:var(--green); }
         .tp-line { flex:1;height:1px;background:var(--border);margin:0 24px;max-width:100px; }
 
-        .search-bar { background:var(--dark2);border-bottom:1px solid var(--border);padding:16px 32px; }
+        .search-bar { background:var(--card-bg);border-bottom:1px solid var(--border);padding:16px 32px; }
         .search-bar form { display:flex;gap:12px;align-items:center;flex-wrap:wrap; }
         .sb-field { display:flex;flex-direction:column;gap:2px;min-width:140px; }
-        .sb-label { font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px; }
-        .sb-select, .sb-input { background:var(--card-bg);border:1px solid var(--border); color:var(--text);border-radius:10px;padding:8px 12px; font-size:14px;font-family:'DM Sans',sans-serif;outline:none; transition:border-color .2s; }
-        .sb-select:focus,.sb-input:focus { border-color:var(--gold); }
-        .sb-select option { background:var(--dark2); }
-        .sb-input { color-scheme:dark; }
-        .btn-search { background:var(--gold);border:none;color:#000;border-radius:10px;padding:10px 20px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif; }
-        .btn-search:hover { background:var(--gold2); }
+        .sb-label { font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600; }
+        .sb-select, .sb-input { background:var(--bg);border:1.5px solid var(--border);color:var(--text);border-radius:10px;padding:8px 12px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s; }
+        .sb-select:focus,.sb-input:focus { border-color:var(--sky);box-shadow:0 0 0 3px rgba(37,99,235,0.08); }
+        .sb-select option { background:#fff;color:var(--text); }
+        .btn-search { background:linear-gradient(135deg,var(--sky),var(--sky2));border:none;color:#fff;border-radius:10px;padding:10px 20px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;box-shadow:0 4px 12px rgba(37,99,235,0.2); }
+        .btn-search:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(37,99,235,0.3); }
         .content { display:grid;grid-template-columns:260px 1fr;gap:24px;padding:24px 32px; }
-        .filter-panel { background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:20px;height:fit-content; }
-        .filter-title { font-size:16px;font-weight:600;margin-bottom:16px; }
+        .filter-panel { background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:20px;height:fit-content;box-shadow:var(--shadow); }
+        .filter-title { font-size:16px;font-weight:600;margin-bottom:16px;color:var(--text); }
         .filter-section { margin-bottom:20px; }
-        .filter-section-title { font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px; }
-        .filter-check { display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;font-size:14px; }
-        .filter-check input { accent-color:var(--gold); width:16px;height:16px; }
-        .btn-apply { width:100%;background:var(--gold);border:none;color:#000;border-radius:10px;padding:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif; }
-        .btn-apply:hover { background:var(--gold2); }
+        .filter-section-title { font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;font-weight:600; }
+        .filter-check { display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer;font-size:14px;color:var(--text); }
+        .filter-check input { accent-color:var(--sky);width:16px;height:16px; }
+        .btn-apply { width:100%;background:linear-gradient(135deg,var(--sky),var(--sky2));border:none;color:#fff;border-radius:10px;padding:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 12px rgba(37,99,235,0.2); }
+        .btn-apply:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(37,99,235,0.3); }
         .results-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:16px; }
         .results-count { font-size:14px;color:var(--muted); }
         .results-count span { color:var(--text);font-weight:600; }
-        .flight-card { background:var(--card-bg);border:1px solid var(--border);border-radius:16px; padding:20px 24px;margin-bottom:12px; display:grid;grid-template-columns:1fr auto 1fr auto auto; gap:16px;align-items:center; transition:all .2s;cursor:pointer; }
-        .flight-card:hover { border-color:rgba(201,168,76,.4);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3); }
+        .flight-card { background:var(--card-bg);border:1.5px solid var(--border);border-radius:16px;padding:20px 24px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto 1fr auto auto;gap:16px;align-items:center;transition:all .2s;cursor:pointer;box-shadow:var(--shadow); }
+        .flight-card:hover { border-color:rgba(37,99,235,0.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(37,99,235,0.12); }
         .airline-info { display:flex;align-items:center;gap:10px; }
-        .airline-logo { width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:18px; }
-        .flight-num { font-size:11px;color:var(--gold); }
+        .airline-logo { width:40px;height:40px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--border); }
+        .flight-num { font-size:11px;color:var(--sky);font-weight:600; }
         .route-col { text-align:center; }
-        .route-time { font-size:22px;font-weight:700; }
+        .route-time { font-size:22px;font-weight:700;color:var(--text); }
         .route-airport { font-size:12px;color:var(--muted); }
         .route-line { display:flex;align-items:center;gap:8px;margin:8px 0; }
         .route-dot { width:6px;height:6px;border-radius:50%;background:var(--muted); }
-        .route-line-bar { flex:1;height:1px;background:linear-gradient(to right,var(--muted),var(--gold),var(--muted)); position:relative; }
-        .route-plane { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;color:var(--gold); }
+        .route-line-bar { flex:1;height:1px;background:linear-gradient(to right,var(--muted),var(--sky),var(--muted));position:relative; }
+        .route-plane { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;color:var(--sky); }
         .route-duration { font-size:11px;color:var(--muted);text-align:center; }
         .price-col { text-align:right; }
         .price-from { font-size:11px;color:var(--muted); }
         .price-amount { font-size:22px;font-weight:700;color:var(--gold); }
         .price-seat { font-size:11px;color:var(--green); }
-        .btn-select { background:var(--gold);border:none;color:#000;border-radius:10px;padding:12px 20px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif; }
-        .btn-select:hover { background:var(--gold2);transform:scale(1.03); }
+        .btn-select { background:linear-gradient(135deg,var(--sky),var(--sky2));border:none;color:#fff;border-radius:10px;padding:12px 20px;font-weight:600;font-size:14px;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;box-shadow:0 4px 12px rgba(37,99,235,0.2); }
+        .btn-select:hover { transform:scale(1.03);box-shadow:0 6px 18px rgba(37,99,235,0.3); }
         .no-results { text-align:center;padding:60px;color:var(--muted); }
         .no-results i { font-size:48px;display:block;margin-bottom:16px; }
     </style>
@@ -344,7 +361,7 @@ if ($is_searched) {
                             <div class="price-from">from</div>
                             <div class="price-amount">IDR <?php echo number_format($f['min_price']); ?></div>
                             <?php if($is_weekend): ?>
-                                <div style="font-size:10px; color:#e8c96a; background:rgba(201,168,76,0.1); padding:2px 6px; border-radius:4px; margin-top:2px;">Weekend Fare</div>
+                                <div style="font-size:10px; color:var(--gold); background:var(--gold-light); padding:2px 6px; border-radius:4px; margin-top:2px;">Weekend Fare</div>
                             <?php else: ?>
                                 <div class="price-seat" style="color:<?php echo $available<5?'var(--red)':'var(--green)'; ?>">
                                     <?php echo $available; ?> seat<?php echo $available!=1?'s':''; ?> left

@@ -8,54 +8,99 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root { --dark:#0d1117;--dark2:#161b27;--card-bg:#1c2333; --gold:#c9a84c;--gold2:#e8c96a;--text:#e8eaf0; --muted:#8892a4;--border:rgba(255,255,255,0.08);--green:#2ecc71; }
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{background:var(--dark);color:var(--text);font-family:'DM Sans',sans-serif;}
-        .sidebar{position:fixed;top:0;left:0;width:72px;height:100vh;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:24px 0;z-index:100;}
-        .sidebar-logo{color:var(--gold);font-size:24px;margin-bottom:36px;}
-        .sidebar-nav{display:flex;flex-direction:column;gap:8px;width:100%;}
-        .sidebar-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0;cursor:pointer;color:var(--muted);font-size:10px;transition:all .2s;text-decoration:none;border-left:3px solid transparent;}
-        .sidebar-item i{font-size:20px;}
-        .sidebar-item:hover,.sidebar-item.active{color:var(--text);background:rgba(255,255,255,.04);border-left-color:var(--gold);}
-        .main{margin-left:72px;padding:40px;max-width:960px;}
-        .page-title{font-size:28px;font-weight:600;margin-bottom:4px;}
-        .page-sub{color:var(--muted);font-size:14px;margin-bottom:32px;}
-        .booking-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;}
-        .form-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:28px;}
-        .form-section-title{font-size:16px;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-        .form-label-custom{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-        .form-control-custom{ width:100%;background:var(--dark2);border:1px solid var(--border); color:var(--text);border-radius:10px;padding:12px 14px; font-size:14px;font-family:'DM Sans',sans-serif;outline:none; transition:border-color .2s; }
-        .form-control-custom:focus{border-color:var(--gold);}
-        .form-control-custom::placeholder{color:var(--muted);}
-        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-        .form-group{margin-bottom:14px;}
-        .summary-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:24px;height:fit-content;margin-bottom:20px;}
-        .sum-title{font-size:16px;font-weight:600;margin-bottom:16px;}
-        .sum-route{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border);}
-        .sum-code{font-size:24px;font-weight:700;}
-        .sum-seat{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
-        .sum-seat-num{font-weight:600;}
-        .sum-seat-class{font-size:12px;color:var(--muted);}
-        .sum-seat-price{color:var(--gold);}
-        .sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:16px;margin-top:4px;font-size:18px;font-weight:700;color:var(--gold);}
-        .sum-tax{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px;}
-        .btn-confirm{width:100%;background:var(--gold);border:none;color:#000;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;margin-top:16px;}
-        .btn-confirm:hover{background:var(--gold2);transform:translateY(-2px);}
-        .steps{display:flex;align-items:center;gap:0;margin-bottom:32px;}
-        .step{display:flex;align-items:center;gap:8px;font-size:13px;}
-        .step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;}
-        .step.done .step-num{background:var(--green);color:#000;}
-        .step.active .step-num{background:var(--gold);color:#000;}
-        .step.inactive .step-num{background:var(--card-bg);color:var(--muted);border:1px solid var(--border);}
-        .step.active span{color:var(--text);font-weight:600;}
-        .step.inactive span{color:var(--muted);}
-        .step-line{flex:1;height:1px;background:var(--border);margin:0 12px;min-width:30px;}
-        .success-card{background:var(--card-bg);border:1px solid rgba(46,204,113,.3);border-radius:20px;padding:40px;text-align:center;max-width:600px;margin:0 auto;}
-        .success-icon{font-size:64px;margin-bottom:20px;display:block;}
-        .booking-code{background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:16px 24px;font-size:28px;font-weight:700;letter-spacing:4px;color:var(--gold);margin:20px 0;}
-        .ticket-detail{display:flex;justify-content:space-between;font-size:14px;padding:10px 0;border-bottom:1px solid var(--border);}
-        .ticket-detail .label{color:var(--muted);}
-        .btn-back-home{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#000;border:none;border-radius:12px;padding:12px 24px;font-weight:600;text-decoration:none;margin-top:24px;font-family:'DM Sans',sans-serif;}
+        :root {
+            --bg: #f0f4f8;
+            --bg2: #e4eaf2;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1a2340;
+            --sidebar-active: #2a3a60;
+            --gold: #c47d20;
+            --gold2: #e09830;
+            --gold-light: #fdf3e3;
+            --text: #1a2340;
+            --muted: #7a8aaa;
+            --border: rgba(26,35,64,0.10);
+            --sky: #2563eb;
+            --sky2: #3b82f6;
+            --shadow: 0 4px 32px rgba(37,99,235,0.08);
+            --green: #16a34a;
+        }
+
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            position:fixed;top:0;left:0;width:72px;height:100vh;
+            background: var(--sidebar-bg);
+            display:flex;flex-direction:column;align-items:center;padding:24px 0;z-index:100;
+            box-shadow: 4px 0 24px rgba(26,35,64,0.12);
+        }
+        .sidebar-logo { color: var(--gold2); font-size:24px; margin-bottom:36px; }
+        .sidebar-nav { display:flex;flex-direction:column;gap:8px;width:100%; }
+        .sidebar-item {
+            display:flex;flex-direction:column;align-items:center;gap:4px;
+            padding:12px 0;cursor:pointer;color:rgba(255,255,255,0.45);
+            font-size:10px;transition:all .2s;text-decoration:none;border-left:3px solid transparent;
+        }
+        .sidebar-item i { font-size:20px; }
+        .sidebar-item:hover { color:rgba(255,255,255,0.85); background:rgba(255,255,255,.06); border-left-color: var(--gold2); }
+        .sidebar-item.active { color:#fff; background: var(--sidebar-active); border-left-color: var(--gold2); }
+
+        .main { margin-left: 72px; padding: 40px; max-width: 1100px; }
+        
+        /* ── STEPS ── */
+        .steps { display:flex; align-items:center; margin-bottom:40px; background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .step { display:flex; align-items:center; gap:12px; }
+        .step-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; background: var(--bg2); border: 1.5px solid var(--border); color: var(--muted); }
+        .step.done .step-num { background: var(--green); color: #fff; border-color: var(--green); }
+        .step.active .step-num { background: var(--sky); color: #fff; border-color: var(--sky); }
+        .step span { font-size: 14px; font-weight: 600; color: var(--muted); }
+        .step.active span { color: var(--text); }
+        .step-line { flex:1; height:1px; background: var(--border); margin: 0 20px; }
+
+        .page-title { font-size: 28px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+        .page-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+        .booking-grid { display: grid; grid-template-columns: 1fr 380px; gap: 32px; }
+
+        /* ── FORMS ── */
+        .form-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: var(--shadow); }
+        .form-section-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--text); }
+        .form-label-custom { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 8px; }
+        .form-control-custom { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 15px; color: var(--text); transition: all 0.2s; outline: none; }
+        .form-control-custom:focus { border-color: var(--sky); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+
+        /* ── SUMMARY ── */
+        .summary-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+        .sum-title { font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px; }
+        .sum-route { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .sum-code { font-size: 24px; font-weight: 800; color: var(--text); }
+        .sum-seat { display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px dashed var(--border); }
+        .sum-seat-num { font-weight: 700; font-size: 15px; }
+        .sum-seat-class { font-size: 12px; color: var(--muted); }
+        .sum-seat-price { font-weight: 700; color: var(--gold); }
+        
+        .total-box { background: var(--sidebar-bg); border-radius: 16px; padding: 24px; color: #fff; }
+        .sum-tax { display: flex; justify-content: space-between; font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
+        .sum-total { display: flex; justify-content: space-between; font-size: 20px; font-weight: 800; color: var(--gold2); border-top: 1px solid rgba(255,255,255,0.1); pt: 15px; margin-top: 10px; padding-top: 15px; }
+
+        .btn-confirm { width: 100%; background: linear-gradient(135deg, var(--sky) 0%, var(--sky2) 100%); border: none; color: #fff; border-radius: 16px; padding: 18px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 24px rgba(37,99,235,0.25); }
+        .btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(37,99,235,0.35); }
+
+        /* ── SUCCESS ── */
+        .success-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 32px; padding: 60px 40px; text-align: center; max-width: 600px; margin: 40px auto; box-shadow: var(--shadow); }
+        .success-icon { width: 80px; height: 80px; background: #ecfdf5; color: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 24px; }
+        .booking-code { background: var(--gold-light); border: 2px dashed var(--gold2); border-radius: 16px; padding: 20px; font-size: 32px; font-weight: 800; letter-spacing: 4px; color: var(--gold); margin: 24px 0; }
+        .btn-back-home { display: inline-flex; align-items: center; gap: 8px; background: var(--sidebar-bg); color: #fff; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 600; transition: 0.2s; }
+        .btn-back-home:hover { background: var(--sidebar-active); color: #fff; }
     </style>
 </head>
 <body>
@@ -114,7 +159,6 @@ foreach ($legs as &$leg) {
     while($p = mysqli_fetch_assoc($q_price)) $prices[$p['travel_class']] = $p['price'];
 
     $dep_time = new DateTime($leg['flight']['departure_time']);
-    // 6 = Saturday, 7 = Sunday
     $is_weekend = in_array($dep_time->format('N'), [6, 7]);
     $multiplier = $is_weekend ? 1.2 : 1.0;
 
@@ -134,7 +178,6 @@ unset($leg);
 $grand_tax   = round($grand_subtotal * 0.1);
 $grand_total = $grand_subtotal + $grand_tax;
 
-/* ── STEP 3: Final Insert ───────────────────────────────── */
 if ($step == 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $names   = $_POST['pax_name'] ?? [];
     $emails  = $_POST['pax_email'] ?? [];
@@ -143,7 +186,6 @@ if ($step == 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
     mysqli_begin_transaction($conn);
     $all_ok = true;
 
-    // 1. Insert into Master Booking table
     $code = strtoupper(substr(md5(uniqid(rand(),true)), 0, 8));
     $email_main = mysqli_real_escape_string($conn, $emails[0]);
     $phone_main = mysqli_real_escape_string($conn, $phones[0]);
@@ -154,19 +196,16 @@ if ($step == 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $all_ok = false;
     } else {
         $booking_id = mysqli_insert_id($conn);
-
-        // 2. Insert into Ticket table (Iterate over every leg, and every seat)
         foreach ($legs as $leg) {
             foreach ($leg['seats_data'] as $idx => $seat) {
                 $snum = $seat['seat_number'];
                 $sclass = $seat['travel_class'];
                 $sid = $leg['schedule_id'];
                 
-                // Check double booking real-time lock
                 $check = mysqli_query($conn, "SELECT id FROM ticket WHERE flight_schedule_id=$sid AND seat_number='$snum' FOR UPDATE");
                 if(mysqli_num_rows($check) > 0) {
                     $all_ok = false;
-                    $error_msg = "Seat $snum on the " . $leg['label'] . " flight has just been taken by someone else! Please restart your search.";
+                    $error_msg = "Seat $snum on the " . $leg['label'] . " flight has just been taken by someone else!";
                     break 2;
                 }
 
@@ -177,14 +216,8 @@ if ($step == 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if ($all_ok) {
-        mysqli_commit($conn);
-        $success = true;
-        $booking_code = $code;
-    } else {
-        mysqli_rollback($conn);
-        if (!$error_msg) $error_msg = "Booking failed. Please try again.";
-    }
+    if ($all_ok) { mysqli_commit($conn); $success = true; $booking_code = $code; } 
+    else { mysqli_rollback($conn); if (!$error_msg) $error_msg = "Booking failed."; }
 }
 
 function fmt($n) { return 'IDR '.number_format($n); }
@@ -201,47 +234,51 @@ function fmt($n) { return 'IDR '.number_format($n); }
 
 <div class="main">
 
-<?php if ($success): /* ─── SUCCESS ─── */ ?>
+<?php if ($success): ?>
     <div class="success-card">
-        <span class="success-icon">🎉</span>
-        <h2 style="font-size:28px;margin-bottom:8px">Booking Confirmed!</h2>
-        <p style="color:var(--muted);margin-bottom:8px">Your tickets have been issued successfully.</p>
+        <div class="success-icon"><i class="bi bi-check-lg"></i></div>
+        <h2 class="page-title" style="margin-bottom:12px">Booking Confirmed!</h2>
+        <p class="page-sub">Your tickets have been issued. Pack your bags!</p>
+        
         <div class="booking-code"><?php echo $booking_code; ?></div>
-        <p style="font-size:12px;color:var(--muted);margin-bottom:24px">Save this booking code to view your reservation</p>
-
-        <div style="text-align:left">
-            <div class="ticket-detail"><span class="label">Trip Type</span><span style="color:var(--text);font-weight:600"><?php echo ucfirst($trip_type); ?></span></div>
-            <div class="ticket-detail" style="border:none"><span class="label">Total Paid</span><span style="color:var(--gold);font-weight:700"><?php echo fmt($grand_total); ?></span></div>
+        
+        <div style="text-align:left; background:var(--bg); padding:20px; border-radius:16px; margin-bottom:32px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span style="color:var(--muted)">Trip Type</span>
+                <span style="font-weight:700"><?php echo ucfirst($trip_type); ?></span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--muted)">Total Paid</span>
+                <span style="font-weight:800; color:var(--sky)"><?php echo fmt($grand_total); ?></span>
+            </div>
         </div>
 
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px;">
-            <a href="index.php" class="btn-back-home"><i class="bi bi-house"></i> Back to Home</a>
-            <a href="my_booking.php?code=<?php echo $booking_code; ?>" class="btn-back-home" style="background:var(--card-bg);color:var(--text);border:1px solid var(--border)">
-                <i class="bi bi-journal-bookmark"></i> View My Tickets
-            </a>
+        <div style="display:flex; gap:16px; justify-content:center;">
+            <a href="index.php" class="btn-back-home">Go to Home</a>
+            <a href="my_booking.php?code=<?php echo $booking_code; ?>" class="btn-back-home" style="background:var(--bg2); color:var(--text);">View Ticket</a>
         </div>
     </div>
 
-<?php else: /* ─── FORM ─── */ ?>
+<?php else: ?>
 
-<?php if ($error_msg): ?>
-<div style="background:rgba(231,76,60,.15);border:1px solid rgba(231,76,60,.3);border-radius:12px;padding:14px 18px;margin-bottom:20px;color:#e74c3c;">
-    <i class="bi bi-exclamation-triangle"></i> <?php echo $error_msg; ?>
-</div>
-<?php endif; ?>
+    <?php if ($error_msg): ?>
+    <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius:12px">
+        <i class="bi bi-exclamation-circle-fill me-2"></i> <?php echo $error_msg; ?>
+    </div>
+    <?php endif; ?>
 
     <div class="steps">
         <div class="step done"><div class="step-num"><i class="bi bi-check"></i></div><span>Search</span></div>
         <div class="step-line"></div>
-        <div class="step done"><div class="step-num"><i class="bi bi-check"></i></div><span>Seat Selection</span></div>
+        <div class="step done"><div class="step-num"><i class="bi bi-check"></i></div><span>Seats</span></div>
         <div class="step-line"></div>
-        <div class="step active"><div class="step-num">3</div><span>Passenger Details</span></div>
+        <div class="step active"><div class="step-num">3</div><span>Details</span></div>
         <div class="step-line"></div>
-        <div class="step inactive"><div class="step-num"><i class="bi bi-check2-all"></i></div><span>Confirm</span></div>
+        <div class="step"><div class="step-num">4</div><span>Finish</span></div>
     </div>
 
     <div class="page-title">Passenger Details</div>
-    <div class="page-sub">Fill in the details for <?php echo $passengers; ?> passenger<?php echo $passengers>1?'s':''; ?></div>
+    <div class="page-sub">Almost there! Please provide the travelers' information.</div>
 
     <div class="booking-grid">
         <div>
@@ -261,67 +298,64 @@ function fmt($n) { return 'IDR '.number_format($n); }
                 <?php endif; ?>
 
                 <?php for ($i = 0; $i < $passengers; $i++): ?>
-                <div class="form-card" style="margin-bottom:16px">
+                <div class="form-card">
                     <div class="form-section-title">
-                        <i class="bi bi-person-circle" style="color:var(--gold)"></i>
+                        <i class="bi bi-person-fill" style="color:var(--sky)"></i>
                         Passenger <?php echo $i+1; ?>
-                        
-                        <div style="font-size:11px;color:var(--muted);font-weight:400;margin-top:4px;">
-                            <?php foreach($legs as $leg): ?>
-                                <?php echo $leg['label']; ?> Seat: <?php echo $leg['seats_data'][$i]['seat_number']; ?> 
-                                (<?php echo $leg['seats_data'][$i]['travel_class']; ?>)<br>
-                            <?php endforeach; ?>
-                        </div>
+                        <span style="font-size:12px; font-weight:500; color:var(--muted); margin-left:auto;">
+                            Seats: <?php foreach($legs as $l) echo $l['seats_data'][$i]['seat_number'] . ' '; ?>
+                        </span>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label-custom">Full Name</label>
-                            <input type="text" name="pax_name[]" class="form-control-custom" placeholder="John Doe" required>
+                            <input type="text" name="pax_name[]" class="form-control-custom" placeholder="As per ID/Passport" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label-custom">Phone Number</label>
-                            <input type="tel" name="pax_phone[]" class="form-control-custom" placeholder="+62 812 3456 7890" required>
+                            <input type="tel" name="pax_phone[]" class="form-control-custom" placeholder="+62 812..." required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label-custom">Email Address</label>
-                        <input type="email" name="pax_email[]" class="form-control-custom" placeholder="john@example.com" required>
+                        <input type="email" name="pax_email[]" class="form-control-custom" placeholder="email@example.com" required>
                     </div>
                 </div>
                 <?php endfor; ?>
 
-                <button type="submit" class="btn-confirm">Issue Tickets &nbsp;<i class="bi bi-shield-check"></i></button>
+                <button type="submit" class="btn-confirm">Complete Booking & Issue Tickets</button>
             </form>
         </div>
 
         <aside>
-            <?php foreach ($legs as $leg): 
-                $dep = new DateTime($leg['flight']['departure_time']);
-            ?>
+            <?php foreach ($legs as $leg): $dep = new DateTime($leg['flight']['departure_time']); ?>
             <div class="summary-card">
                 <div class="sum-title"><?php echo $leg['label']; ?> Flight</div>
                 <div class="sum-route">
-                    <div><div class="sum-code"><?php echo $leg['flight']['origin_code']; ?></div><div style="font-size:12px;color:var(--muted)"><?php echo $leg['flight']['origin_city']; ?></div></div>
-                    <div style="color:var(--gold)"><i class="bi bi-airplane-fill"></i></div>
-                    <div style="text-align:right"><div class="sum-code"><?php echo $leg['flight']['dest_code']; ?></div><div style="font-size:12px;color:var(--muted)"><?php echo $leg['flight']['dest_city']; ?></div></div>
+                    <div class="sum-code"><?php echo $leg['flight']['origin_code']; ?></div>
+                    <i class="bi bi-airplane-fill" style="color:var(--sky); opacity:0.3"></i>
+                    <div class="sum-code"><?php echo $leg['flight']['dest_code']; ?></div>
                 </div>
-                <div style="font-size:13px;color:var(--muted);margin-bottom:16px">
-                    <?php echo $leg['flight']['airline_name'].' · '.$leg['flight']['flight_number']; ?><br>
-                    <?php echo $dep->format('d M Y, H:i'); ?>
+                <div style="font-size:13px; margin-bottom:20px;">
+                    <div style="font-weight:700"><?php echo $leg['flight']['airline_name']; ?></div>
+                    <div style="color:var(--muted)"><?php echo $dep->format('d M Y, H:i'); ?></div>
                 </div>
 
                 <?php foreach ($leg['seats_data'] as $seat): ?>
                 <div class="sum-seat">
-                    <div><div class="sum-seat-num">Seat <?php echo $seat['seat_number']; ?></div><div class="sum-seat-class"><?php echo $seat['travel_class']; ?></div></div>
+                    <div>
+                        <div class="sum-seat-num">Seat <?php echo $seat['seat_number']; ?></div>
+                        <div class="sum-seat-class"><?php echo $seat['travel_class']; ?></div>
+                    </div>
                     <div class="sum-seat-price"><?php echo fmt($seat['price']); ?></div>
                 </div>
                 <?php endforeach; ?>
             </div>
             <?php endforeach; ?>
 
-            <div class="summary-card" style="background:var(--dark2)">
-                <div class="sum-tax"><span>Tax & Fee (10%)</span><span><?php echo fmt($grand_tax); ?></span></div>
-                <div class="sum-total"><span>Grand Total</span><span><?php echo fmt($grand_total); ?></span></div>
+            <div class="total-box">
+                <div class="sum-tax"><span>Taxes & Fees (10%)</span><span><?php echo fmt($grand_tax); ?></span></div>
+                <div class="sum-total"><span>Total Amount</span><span><?php echo fmt($grand_total); ?></span></div>
             </div>
         </aside>
     </div>

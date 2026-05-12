@@ -9,91 +9,199 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         :root {
-            --dark: #0d1117; --dark2: #161b27; --card-bg: #1c2333;
-            --gold: #c9a84c; --gold2: #e8c96a; --text: #e8eaf0;
-            --muted: #8892a4; --border: rgba(255,255,255,0.08);
-            --accent-bg: #1c2333;
+            --bg: #f0f4f8;
+            --bg2: #e4eaf2;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1a2340;
+            --sidebar-active: #2a3a60;
+            --gold: #c47d20;
+            --gold2: #e09830;
+            --gold-light: #fdf3e3;
+            --text: #1a2340;
+            --muted: #7a8aaa;
+            --border: rgba(26,35,64,0.10);
+            --sky: #2563eb;
+            --sky2: #3b82f6;
+            --shadow: 0 4px 32px rgba(37,99,235,0.08);
         }
 
         * { box-sizing:border-box; margin:0; padding:0; }
-        body { background: var(--dark); color: var(--text); font-family: 'DM Sans', sans-serif; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+        }
 
         /* ── SIDEBAR ── */
-        .sidebar { position:fixed;top:0;left:0;width:72px;height:100vh;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:24px 0;z-index:100; }
-        .sidebar-logo { color:var(--gold);font-size:24px;margin-bottom:36px; }
+        .sidebar {
+            position:fixed;top:0;left:0;width:72px;height:100vh;
+            background: var(--sidebar-bg);
+            border-right: none;
+            display:flex;flex-direction:column;align-items:center;padding:24px 0;z-index:100;
+            box-shadow: 4px 0 24px rgba(26,35,64,0.12);
+        }
+        .sidebar-logo { color: var(--gold2); font-size:24px; margin-bottom:36px; }
         .sidebar-nav { display:flex;flex-direction:column;gap:8px;width:100%; }
-        .sidebar-item { display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 0;cursor:pointer;color:var(--muted);font-size:10px;transition:all .2s;text-decoration:none;border-left:3px solid transparent; }
+        .sidebar-item {
+            display:flex;flex-direction:column;align-items:center;gap:4px;
+            padding:12px 0;cursor:pointer;color:rgba(255,255,255,0.45);
+            font-size:10px;transition:all .2s;text-decoration:none;border-left:3px solid transparent;
+        }
         .sidebar-item i { font-size:20px; }
-        .sidebar-item:hover,.sidebar-item.active { color:var(--text);background:rgba(255,255,255,.04);border-left-color:var(--gold); }
+        .sidebar-item:hover { color:rgba(255,255,255,0.85); background:rgba(255,255,255,.06); border-left-color: var(--gold2); }
+        .sidebar-item.active { color:#fff; background: var(--sidebar-active); border-left-color: var(--gold2); }
 
         /* ── MAIN CONTENT ── */
-        .main { margin-left: 72px; padding-bottom: 50px; }
+        .main { margin-left: 72px; padding-bottom: 60px; }
 
         .topbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 40px;
+            padding: 20px 48px;
+            background: transparent;
         }
 
         /* ── HERO ── */
         .hero {
-            padding: 40px 60px;
+            position: relative;
+            padding: 48px 60px 120px;
             display: flex; align-items: center;
-            min-height: 400px;
-            background: radial-gradient(circle at 80% 20%, rgba(201,168,76,0.05) 0%, transparent 50%);
+            min-height: 420px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a2340 0%, #2563eb 60%, #4fa3e0 100%);
         }
-        .hero-title { font-family: 'Playfair Display', serif; font-size: 64px; line-height: 1.1; font-weight: 700; }
-        .hero-title span { color: var(--gold); font-style: italic; }
+        /* Decorative sky circles */
+        .hero::before {
+            content: '';
+            position: absolute; top: -80px; right: -80px;
+            width: 420px; height: 420px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero::after {
+            content: '';
+            position: absolute; bottom: -60px; left: 30%;
+            width: 600px; height: 200px; border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            transform: rotate(-6deg);
+            pointer-events: none;
+        }
+        /* Floating cloud blobs */
+        .hero-cloud {
+            position: absolute; border-radius: 100px;
+            background: rgba(255,255,255,0.07);
+            pointer-events: none;
+        }
+        .hero-cloud.c1 { width:260px; height:60px; top:60px; right:200px; }
+        .hero-cloud.c2 { width:180px; height:44px; top:110px; right:120px; opacity:0.5; }
+        .hero-cloud.c3 { width:100px; height:30px; bottom:100px; left:200px; opacity:0.4; }
+
+        .hero-content { position: relative; z-index:2; }
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.13); border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 20px; padding: 6px 16px;
+            color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 500;
+            margin-bottom: 20px; backdrop-filter: blur(6px);
+        }
+        .hero-eyebrow span { background: var(--gold2); color: #fff; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 700; }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 62px; line-height: 1.08; font-weight: 700;
+            color: #fff; letter-spacing: -1px;
+        }
+        .hero-title em { color: var(--gold2); font-style: italic; }
+        .hero-subtitle { color: rgba(255,255,255,0.65); margin-top: 16px; font-size: 16px; max-width: 420px; }
 
         /* ── SEARCH CARD ── */
-        .search-section { padding: 0 60px; margin-top: -40px; }
+        .search-section { padding: 0 48px; margin-top: -70px; position: relative; z-index: 10; }
         .search-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            border-radius: 24px; padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 28px; padding: 32px 36px;
+            box-shadow: 0 20px 60px rgba(37,99,235,0.13), 0 2px 8px rgba(0,0,0,0.05);
         }
-        .trip-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .trip-tabs { display: flex; gap: 8px; margin-bottom: 26px; }
         .trip-tab {
-            padding: 10px 24px; border-radius: 12px; border: none;
-            background: var(--dark2); color: var(--muted);
-            font-weight: 500; transition: 0.3s; cursor: pointer;
+            padding: 9px 22px; border-radius: 10px; border: 1.5px solid var(--border);
+            background: transparent; color: var(--muted);
+            font-weight: 600; font-size: 13px; transition: 0.2s; cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
         }
-        .trip-tab.active { background: var(--gold); color: #000; }
+        .trip-tab.active { background: var(--sky); color: #fff; border-color: var(--sky); }
+        .trip-tab:not(.active):hover { border-color: var(--sky2); color: var(--sky); }
 
         /* Modern Grid Layout */
         .search-grid {
             display: grid;
-            grid-template-columns: 1.5fr auto 1.5fr 1fr 1fr auto;
-            gap: 20px; align-items: center;
+            grid-template-columns: 1.5fr auto 1.5fr 1fr 0.7fr 1fr auto;
+            gap: 14px; align-items: center;
         }
         .input-box {
-            background: var(--dark2);
-            border: 1px solid var(--border);
+            background: var(--bg);
+            border: 1.5px solid var(--border);
             border-radius: 16px; padding: 12px 18px;
-            position: relative; transition: border-color 0.2s;
+            position: relative; transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .input-box:focus-within { border-color: var(--gold); }
-        .label { font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 4px; }
+        .input-box:focus-within {
+            border-color: var(--sky);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+        }
+        .label {
+            font-size: 10px; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.8px;
+            margin-bottom: 5px; font-weight: 600;
+        }
         .val-select {
             width: 100%; background: transparent; border: none;
-            color: var(--text); font-size: 18px; font-weight: 700; outline: none;
+            color: var(--text); font-size: 17px; font-weight: 700;
+            outline: none; font-family: 'DM Sans', sans-serif;
         }
-        .val-select option { background: var(--dark2); color: var(--text); }
-        
+        .val-select option { background: #fff; color: var(--text); }
+
         .swap-btn {
-            color: var(--muted); font-size: 20px; cursor: pointer;
-            transition: all 0.2s; display: flex; align-items: center; justify-content: center;
-            width: 40px; height: 40px; border-radius: 50%; background: var(--dark2); border: 1px solid var(--border);
+            color: var(--muted); font-size: 18px; cursor: pointer;
+            transition: all 0.22s; display: flex; align-items: center; justify-content: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: var(--card-bg); border: 1.5px solid var(--border);
+            box-shadow: var(--shadow);
         }
-        .swap-btn:hover { color: var(--gold); border-color: var(--gold); transform: rotate(180deg); }
+        .swap-btn:hover { color: var(--sky); border-color: var(--sky); transform: rotate(180deg); box-shadow: 0 4px 16px rgba(37,99,235,0.12); }
 
         .btn-search-main {
-            width: 60px; height: 60px; border-radius: 18px;
-            background: var(--gold); border: none; color: #000;
-            font-size: 24px; display: flex; align-items: center; justify-content: center;
+            height: 56px; padding: 0 28px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--sky) 0%, #4fa3e0 100%);
+            border: none; color: #fff;
+            font-size: 15px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
             cursor: pointer; transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 6px 20px rgba(37,99,235,0.25);
+            white-space: nowrap;
         }
-        .btn-search-main:hover { background: var(--gold2); transform: scale(1.05); }
+        .btn-search-main:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(37,99,235,0.35); }
+        .btn-search-main i { font-size: 18px; }
+
+        /* ── PROMO BADGE ── */
+        .promo-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--text); font-weight: 600; font-size: 14px;
+        }
+        .promo-tag {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold2) 100%);
+            color: #fff; padding: 3px 10px; border-radius: 6px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+
+        /* ── STATS ROW ── */
+        .stats-row {
+            display: flex; gap: 40px;
+            padding: 40px 48px 0;
+        }
+        .stat-item { text-align: center; }
+        .stat-num { font-size: 28px; font-weight: 800; color: var(--sky); letter-spacing: -1px; }
+        .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
     </style>
 </head>
 <body> 
@@ -116,19 +224,23 @@ while($a = mysqli_fetch_assoc($airports_q)) $airports[] = $a;
 
 <div class="main">
     <div class="topbar">
-        <div class="promo-badge" style="color: var(--gold); font-weight: 600;">
-            <span style="background: var(--gold); color: #000; padding: 2px 8px; border-radius: 5px; font-size: 12px; margin-right: 10px;">New</span>
+        <div class="promo-badge">
+            <span class="promo-tag">NEW</span>
             Get 10% off your first booking
         </div>
         <div class="topbar-right d-flex align-items-center gap-3">
-            <div class="avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--dark2); border: 1px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight: bold; color: var(--gold);">N</div>
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--sky),#4fa3e0);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px;box-shadow:0 4px 12px rgba(37,99,235,0.25);">N</div>
         </div>
     </div>
 
     <div class="hero">
+        <div class="hero-cloud c1"></div>
+        <div class="hero-cloud c2"></div>
+        <div class="hero-cloud c3"></div>
         <div class="hero-content">
-            <h1 class="hero-title">Fly to your<br>dream <span>destination</span></h1>
-            <p style="color: var(--muted); margin-top: 20px;">Find the best flight deals to anywhere in the world.</p>
+            <div class="hero-eyebrow"><span>✦ NEW</span> 10% off your first flight</div>
+            <h1 class="hero-title">Fly to your<br>dream <em>destination</em></h1>
+            <p class="hero-subtitle">Discover the best flight deals to hundreds of destinations worldwide.</p>
         </div>
     </div>
 
@@ -144,7 +256,7 @@ while($a = mysqli_fetch_assoc($airports_q)) $airports[] = $a;
                 
                 <div class="search-grid">
                     <div class="input-box">
-                        <div class="label">From</div>
+                        <div class="label"><i class="bi bi-geo-alt-fill" style="color:var(--sky);margin-right:3px"></i>From</div>
                         <select name="origin_id" id="origin_id" class="val-select">
                             <?php foreach($airports as $ap): ?>
                             <option value="<?php echo $ap['id']; ?>" <?php echo $ap['code']=='CGK'?'selected':''; ?>>
@@ -159,7 +271,7 @@ while($a = mysqli_fetch_assoc($airports_q)) $airports[] = $a;
                     </div>
 
                     <div class="input-box">
-                        <div class="label">To</div>
+                        <div class="label"><i class="bi bi-geo-fill" style="color:var(--gold);margin-right:3px"></i>To</div>
                         <select name="destination_id" id="destination_id" class="val-select">
                             <?php foreach($airports as $ap): ?>
                             <option value="<?php echo $ap['id']; ?>" <?php echo $ap['code']=='NRT'?'selected':''; ?>>
@@ -170,20 +282,51 @@ while($a = mysqli_fetch_assoc($airports_q)) $airports[] = $a;
                     </div>
 
                     <div class="input-box">
-                        <div class="label">Departure</div>
+                        <div class="label"><i class="bi bi-calendar3" style="margin-right:3px"></i>Departure</div>
                         <input type="date" id="dep-date" name="departure_date" class="val-select" style="font-size: 14px;" value="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" required>
                     </div>
 
                     <div class="input-box" id="return-box" style="opacity: 0.5; pointer-events: none;">
-                        <div class="label">Return</div>
+                        <div class="label"><i class="bi bi-calendar3-event" style="margin-right:3px"></i>Return</div>
                         <input type="date" id="ret-date" name="return_date" class="val-select" style="font-size: 14px;" disabled>
                     </div>
 
+                    <div class="input-box">
+                        <div class="label"><i class="bi bi-people-fill" style="color:var(--sky);margin-right:3px"></i>Passengers</div>
+                        <select name="passengers" id="passengers" class="val-select" style="font-size:15px;">
+                            <option value="1">1 Adult</option>
+                            <option value="2">2 Adults</option>
+                            <option value="3">3 Adults</option>
+                            <option value="4">4 Adults</option>
+                            <option value="5">5 Adults</option>
+                            <option value="6">6 Adults</option>
+                        </select>
+                    </div>
+
                     <button type="submit" class="btn-search-main">
-                        <i class="bi bi-search"></i>
+                        <i class="bi bi-search"></i> Search
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-item">
+            <div class="stat-num">500+</div>
+            <div class="stat-label">Destinations</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">2M+</div>
+            <div class="stat-label">Happy Travelers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">150+</div>
+            <div class="stat-label">Airlines</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num">4.9★</div>
+            <div class="stat-label">Average Rating</div>
         </div>
     </div>
 </div>
